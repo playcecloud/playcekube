@@ -25,7 +25,7 @@ path 설정 및 git download
 mkdir /playcecloud
 cd /playcecloud
 git clone https://github.com/playcecloud/playcekube.git
-cd PlayceKube/deployer
+cd playcekube/deployer
 ```
 
 ## 설치

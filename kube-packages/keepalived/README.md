@@ -8,7 +8,7 @@ kubernetes api 및 ingress vip 설정용 keepalived
 
 ```ShellSession
 git clone https://github.com/playcecloud/playcekube.git
-cd PlayceKube
+cd playcekube
 cd kube-packages/keepalived
 ```
 

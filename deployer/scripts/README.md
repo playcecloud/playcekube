@@ -29,7 +29,7 @@ path 설정 및 git download
 mkdir /playcecloud
 cd /playcecloud
 git clone https://github.com/playcecloud/playcekube.git
-cd PlayceKube/deployer/scripts
+cd playcekube/deployer/scripts
 ```
 
 ## Scripts 설명

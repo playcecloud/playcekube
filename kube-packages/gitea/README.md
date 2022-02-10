@@ -6,7 +6,7 @@ private helm repo 에 있는 chart 를 이용하여 설치
 
 ```ShellSession
 git clone https://github.com/playcecloud/playcekube.git
-cd PlayceKube
+cd playcekube
 cd kube-packages/gitea
 ```
 

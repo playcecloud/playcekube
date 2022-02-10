@@ -27,7 +27,7 @@ mkdir /playcecloud
 cd /playcecloud
 git clone https://github.com/playcecloud/playcekube.git
 cd deployer/certification
-cd PlayceKube/deployer
+cd playcekube/deployer
 ```
 
 ## 사설 CA 인증서
