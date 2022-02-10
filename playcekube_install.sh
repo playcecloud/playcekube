@@ -11,20 +11,20 @@ fi
 RELEASE_NUM=$(getReleaseNumber)
 
 # os repository check & untar
-if ! checkRepositoryOSData && [ -f ${PLAYCE_DIR}/PlayceKubeData.OSRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
+if ! checkRepositoryOSData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.OSRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
   echo "# repository os data untar"
-  tar xfp ${PLAYCE_DIR}/PlayceKubeData.OSRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
+  tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.OSRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
 fi
 
 # kubernetes repository check & untar
-if ! checkRepositoryKubernetesData && ! checkRepositoryHelmChartsData && ! checkRepositoryCrioData && ! checkRepositoryDockerData && [ -f ${PLAYCE_DIR}/PlayceKubeData.K8SRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
+if ! checkRepositoryKubernetesData && ! checkRepositoryHelmChartsData && ! checkRepositoryCrioData && ! checkRepositoryDockerData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.K8SRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
   echo "# kubernetes repository data untar"
-  tar xfp ${PLAYCE_DIR}/PlayceKubeData.K8SRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
+  tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.K8SRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
 fi
 # registry check & untar
-if ! checkRegistryData && [ -f ${PLAYCE_DIR}/PlayceKubeData.Registry.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
+if ! checkRegistryData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.Registry.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
   echo "# registry data untar"
-  tar xfp ${PLAYCE_DIR}/PlayceKubeData.Registry.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
+  tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.Registry.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
 fi
 
 # data check or error
