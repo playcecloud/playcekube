@@ -1,0 +1,31 @@
+# tekton-pipeline values.yaml
+image:
+  registry: gcr.io
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+
+# If is enable tekton dashboard is install
+tekton-dashboard:
+  enabled: true
+
+  image:
+    registry: gcr.io
+
+  ingress:
+    enabled: true
+   
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+

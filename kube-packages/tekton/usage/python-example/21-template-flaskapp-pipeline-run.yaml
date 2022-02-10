@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: template-flaskapp-pipeline-run
+  namespace: tekton-example
+spec:
+  pipelineRef:
+    name: template-flaskapp-pipeline
+  serviceAccountName: github-bot
+  workspaces:
+    - name: pipe-space
+      persistentVolumeClaim:
+        claimName: workspace
+  resources:
+    - name: flaskapp-git
+      resourceRef:
+        name: playce-kube-git
+    - name: flaskapp-image
+      resourceRef:
+        name: flaskapp-image
+  params:
+    - name: python-image
+      value: python:3.9.7
+    - name: insecure-registry
+      value: 192.168.50.10:5000
+    - name: flaskapp-subpath
+      value: kube-packages/tekton/usage/python-example/flaskapp
+

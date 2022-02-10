@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: ClusterTask
+metadata:
+  name: download-git
+spec:
+  workspaces:
+    - name: workspace
+  resources:
+    inputs:
+      - name: source-git
+        type: git
+  params:
+    - name: appname
+      type: string
+      description: application name
+      default: default
+
+  steps:
+    - image: registry.playcekube.local:5000/library/busybox:1.35.0
+      name: copysrc
+      script: |
+        #!/bin/sh
+        mkdir -p $(workspaces.workspace.path)/$(params.appname)/src
+        cp -rp $(resources.inputs.source-git.path)/* $(workspaces.workspace.path)/$(params.appname)/src/
+

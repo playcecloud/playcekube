@@ -1,0 +1,60 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: template-flaskapp-pipeline
+  namespace: tekton-example
+spec:
+  workspaces:
+    - name: pipe-space
+  resources:
+    - name: flaskapp-git
+      type: git
+    - name: flaskapp-image
+      type: image
+  params:
+    - name: python-image
+      type: string
+      description: python image
+      default: python:3.9.7
+    - name: insecure-registry
+      type: string
+      description: insecure-registry
+      default: 192.168.50.10:5000
+    - name: flaskapp-subpath
+      type: string
+      description: flask webapp subpath
+      default: ""
+  tasks:
+    - name: create-app
+      taskRef:
+        name: template-create-flaskapp
+      workspaces:
+        - name: result-space
+          workspace: pipe-space
+      resources:
+        inputs:
+          - name: flaskapp-git
+            resource: flaskapp-git
+      params:
+      - name: python-image
+        value: $(params.python-image)
+      - name: flaskapp-subpath
+        value: $(params.flaskapp-subpath)
+    - name: image-job
+      runAfter:
+        - create-app
+      taskRef:
+        name: template-image-build-push
+      workspaces:
+        - name: result-space
+          workspace: pipe-space
+      resources:
+        outputs:
+          - name: flaskapp-image
+            resource: flaskapp-image
+      params:
+      - name: base-image
+        value: $(params.python-image)
+      - name: insecure-registry
+        value: $(params.insecure-registry)
+

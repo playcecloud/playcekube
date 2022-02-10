@@ -1,0 +1,12 @@
+backports.entry-points-selectable==1.1.0
+click==8.0.3
+distlib==0.3.3
+filelock==3.3.2
+Flask==2.0.2
+itsdangerous==2.0.1
+Jinja2==3.0.2
+MarkupSafe==2.0.1
+platformdirs==2.4.0
+six==1.16.0
+virtualenv==20.10.0
+Werkzeug==2.0.2

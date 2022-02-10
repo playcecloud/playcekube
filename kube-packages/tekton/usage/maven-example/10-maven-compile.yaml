@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: maven-compile
+  namespace: tekton-example
+spec:
+  workspaces:
+  - name: compile-result
+  resources:
+    inputs:
+      - name: gs-maven
+        type: git
+  steps:
+    - image: adoptopenjdk/openjdk8:latest
+      name: compile
+      args:
+        - -v $HOME/.m2:/tmp/jenkins-home/.m2
+      workingDir: "$(resources.inputs.gs-maven.path)"
+      script: |
+        #!/usr/bin/env sh
+        echo "##### compile start"
+        cd complete
+
+        ./mvnw clean package
+        cp -rp target/* $(workspaces.compile-result.path)
+        ls -al $(workspaces.compile-result.path)
+  volumes:
+    - name: dind-storage
+      emptyDir: {}
+

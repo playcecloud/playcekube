@@ -1,0 +1,21 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  labels:
+    tekton.dev/pipeline: maven-pipeline
+  name: maven-pipeline-run
+  namespace: tekton-example
+spec:
+  workspaces:
+    - name: pipe-space
+      persistentVolumeClaim:
+        claimName: workspace
+  pipelineRef:
+    name: maven-pipeline
+  resources:
+  - name: builtImage
+    resourceRef:
+      name: example-image-result
+  - name: gs-maven
+    resourceRef:
+      name: gs-maven

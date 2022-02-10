@@ -1,0 +1,75 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: image-build-push
+  namespace: tekton-example
+spec:
+  workspaces:
+  - name: compile-result
+  resources:
+    outputs:
+      - name: builtImage
+        type: image
+  sidecars:
+    - image: docker:dind
+      name: server
+      args:
+      - --insecure-registry=192.168.50.10:5000
+      securityContext:
+        privileged: true
+      env:
+      - name: DOCKER_TLS_CERTDIR
+        value: /certs
+      volumeMounts:
+      - mountPath: /certs/client
+        name: dind-certs
+      readinessProbe:
+        periodSeconds: 1
+        exec:
+          command: ['ls', '/certs/client/ca.pem']
+  steps:
+    - image: docker:latest
+      name: build
+      env:
+      - name: DOCKER_HOST
+        value: tcp://localhost:2376
+      - name: DOCKER_TLS_VERIFY
+        value: '0'
+      - name: DOCKER_CERT_PATH
+        value: /certs/client
+      script: |
+        #!/usr/bin/env sh
+        echo "##### image build start"
+        echo $(workspaces.compile-result.path)
+        cd $(workspaces.compile-result.path)
+        ls -al .
+
+        cat > Dockerfile << EOF
+        FROM openjdk:8-jdk
+        COPY gs-maven-0.1.0.jar /
+        ENTRYPOINT ["java", "-jar", "/gs-maven-0.1.0.jar"]
+        EOF
+        docker build -t $(resources.outputs.builtImage.url) .
+        docker images
+      volumeMounts:
+      - mountPath: /certs/client
+        name: dind-certs
+    - image: docker:latest
+      name: push
+      env:
+      - name: DOCKER_HOST
+        value: tcp://localhost:2376
+      - name: DOCKER_TLS_VERIFY
+        value: '0'
+      - name: DOCKER_CERT_PATH
+        value: /certs/client
+      script: |
+        #!/usr/bin/env sh
+        docker push $(resources.outputs.builtImage.url)
+      volumeMounts:
+      - mountPath: /certs/client
+        name: dind-certs
+  volumes:
+    - name: dind-certs
+      emptyDir: {}
+

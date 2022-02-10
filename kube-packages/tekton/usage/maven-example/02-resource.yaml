@@ -1,0 +1,26 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: gs-maven
+  namespace: tekton-example
+spec:
+  type: git
+  params:
+    - name: url
+      value: https://github.com/spring-guides/gs-maven.git
+    - name: revision
+      value: main
+
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: example-image-result
+  namespace: tekton-example
+spec:
+  type: image
+  params:
+    - name: url
+      value: 192.168.50.10:5000/tekton-example/result:v0.1
+

@@ -1,0 +1,38 @@
+apiVersion: tekton.dev/v1beta1
+kind: ClusterTask
+metadata:
+  name: argo-git-push
+spec:
+  workspaces:
+    - name: workspace
+  resources:
+    inputs:
+      - name: result-image
+        type: image
+      - name: argo-git
+        type: git
+  params:
+    - name: appname
+      type: string
+      description: application name
+      default: default
+
+  steps:
+    - image: registry.playcekube.local:5000/alpine/git:v2.32.0
+      name: argo-push
+      script: |
+        #!/bin/sh
+        cd $(workspaces.workspace.path)/$(params.appname)/src
+        IMAGE_TAG=$(grep "LABEL version" Dockerfile | sed "s/.*LABEL version=\(.*\)/\1/g")
+
+        cd $(resources.inputs.argo-git.path)
+        sed -i "s|image: .*|image: $(resources.inputs.result-image.url):${IMAGE_TAG}|g" deployment.yaml
+        sed -i "s|image: .*|image: $(resources.inputs.result-image.url):${IMAGE_TAG}|g" daemonset.yaml
+
+        git config --global user.email "tekton@local.domain"
+        git config --global user.name "tekton"
+
+        git add --all
+        git commit -m "$(params.appname) version ${IMAGE_TAG} update $(date +%Y%m%d)"
+        git push origin HEAD:$(resources.inputs.argo-git.revision)
+

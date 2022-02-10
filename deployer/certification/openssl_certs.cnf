@@ -1,0 +1,50 @@
+
+[ ca ]
+default_ca = CA_default
+
+[ CA_default ]
+default_bits = 2048
+default_md = sha256
+
+dir = /playcecloud/playcekube/deployer/certification
+new_certs_dir = ${dir}/intermediateCA
+database = ${dir}/CA/playcekube_rootca.index
+serial  = ${dir}/CA/playcekube_rootca.srl
+
+policy = policy_loose
+
+[ policy_loose ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ req ]
+distinguished_name = req_distinguished_name
+extensions = v3_req
+req_extensions = v3_req
+
+[ v3_ca ]
+keyUsage = keyCertSign, cRLSign
+basicConstraints = critical, CA:TRUE
+subjectKeyIdentifier = hash
+nsCertType = sslCA, emailCA, objCA
+
+[ v3_req ]
+basicConstraints = CA:FALSE
+subjectKeyIdentifier = hash
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth,clientAuth
+
+[ v3_intermediate_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical, CA:true, pathlen:0
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+
+
+[ req_distinguished_name ]
+

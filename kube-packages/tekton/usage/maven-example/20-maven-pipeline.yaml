@@ -1,0 +1,36 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: maven-pipeline
+  namespace: tekton-example
+spec:
+  workspaces:
+    - name: pipe-space
+  resources:
+    - name: gs-maven
+      type: git
+    - name: builtImage
+      type: image
+  tasks:
+    - name: compile
+      taskRef:
+        name: maven-compile
+      workspaces:
+        - name: compile-result
+          workspace: pipe-space
+      resources:
+        inputs:
+          - name: gs-maven
+            resource: gs-maven
+    - name: image-job
+      runAfter:
+        - compile
+      taskRef:
+        name: image-build-push
+      workspaces:
+        - name: compile-result
+          workspace: pipe-space
+      resources:
+        outputs:
+          - name: builtImage
+            resource: builtImage

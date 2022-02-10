@@ -1,0 +1,46 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: template-create-flaskapp
+  namespace: tekton-example
+spec:
+  workspaces:
+    - name: result-space
+  resources:
+    inputs:
+      - name: flaskapp-git
+        type: git
+  params:
+    - name: python-image
+      type: string
+      description: python image
+      default: python:3.9.7
+    - name: flaskapp-subpath
+      type: string
+      description: flask webapp subpath
+      default: ""
+
+  steps:
+    - image: $(params.python-image)
+      name: create
+      script: |
+        #!/usr/bin/env sh
+        echo "##### create flaskapp"
+        APPDIR=$(resources.inputs.flaskapp-git.path)
+        if [ "$(params.flaskapp-subpath)" != "" ]; then
+          APPDIR=${APPDIR}/$(params.flaskapp-subpath)
+        fi
+
+        mkdir /flaskapp
+        cp -rp ${APPDIR}/* /flaskapp/
+        cd /flaskapp
+
+        pip install -r requirements.txt
+        virtualenv /flaskapp/appvenv
+        . /flaskapp/appvenv/bin/activate
+        pip install -r requirements.txt
+
+        mkdir $(workspaces.result-space.path)/flaskapp
+        cp -rp /flaskapp/* $(workspaces.result-space.path)/flaskapp/
+        ls -al $(workspaces.result-space.path)/flaskapp
+

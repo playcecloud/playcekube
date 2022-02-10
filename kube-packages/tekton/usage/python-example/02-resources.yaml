@@ -1,0 +1,46 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: playce-kube-git
+  namespace: tekton-example
+spec:
+  type: git
+  params:
+    - name: url
+      value: https://github.com/OpenSourceConsulting/PlayceKube.git
+    - name: revision
+      value: dev
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/basic-auth
+metadata:
+  annotations:
+    tekton.dev/git-0: https://github.com
+  name: github-pat-secret
+  namespace: tekton-example
+data:
+  username: amRsZWVAb3NjaS5rcg==
+  password: Z2hwX1E2SW9PVmRLd3N4N1N5TDJGbWlpVkJhb1daa0xDQTRYcktEaA==
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: github-bot
+  namespace: tekton-example
+secrets:
+- name: github-pat-secret
+
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: flaskapp-image
+spec:
+  type: image
+  params:
+    - name: url
+      value: 192.168.50.10:5000/tekton-example/flaskapp:v0.1
+

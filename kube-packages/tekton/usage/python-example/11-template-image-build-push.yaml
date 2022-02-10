@@ -1,0 +1,84 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: template-image-build-push
+  namespace: tekton-example
+spec:
+  workspaces:
+    - name: result-space
+  resources:
+    outputs:
+      - name: flaskapp-image
+        type: image
+  params:
+    - name: base-image
+      type: string
+      description: base image
+      default: python:3.9.7
+    - name: insecure-registry
+      type: string
+      description: insecure-registry
+      default: 192.168.50.10:5000
+
+  sidecars:
+    - image: docker:dind
+      name: server
+      args:
+      - --insecure-registry=$(params.insecure-registry)
+      securityContext:
+        privileged: true
+      env:
+      - name: DOCKER_TLS_CERTDIR
+        value: /certs
+      volumeMounts:
+      - mountPath: /certs/client
+        name: dind-certs
+      readinessProbe:
+        periodSeconds: 1
+        exec:
+          command: ['ls', '/certs/client/ca.pem']
+  steps:
+    - image: docker:latest
+      name: build
+      env:
+      - name: DOCKER_HOST
+        value: tcp://localhost:2376
+      - name: DOCKER_TLS_VERIFY
+        value: '1'
+      - name: DOCKER_CERT_PATH
+        value: /certs/client
+      script: |
+        #!/usr/bin/env sh
+        echo "##### image build start"
+        cd $(workspaces.result-space.path)/flaskapp
+
+        cat > Dockerfile << EOF
+        FROM $(params.base-image)
+        RUN mkdir /flaskapp
+        COPY . /flaskapp
+        CMD ["/flaskapp/entrypoint.sh"]
+        EOF
+        docker build -t $(resources.outputs.flaskapp-image.url) .
+        docker images
+      volumeMounts:
+      - mountPath: /certs/client
+        name: dind-certs
+    - image: docker:latest
+      name: push
+      env:
+      - name: DOCKER_HOST
+        value: tcp://localhost:2376
+      - name: DOCKER_TLS_VERIFY
+        value: '1'
+      - name: DOCKER_CERT_PATH
+        value: /certs/client
+      script: |
+        #!/usr/bin/env sh
+        docker push $(resources.outputs.flaskapp-image.url)
+      volumeMounts:
+      - mountPath: /certs/client
+        name: dind-certs
+  volumes:
+    - name: dind-certs
+      emptyDir: {}
+

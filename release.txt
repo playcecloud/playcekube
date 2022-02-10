@@ -1,0 +1,3 @@
+name: PlayceKube
+version: kv1.22.5.1
+release-date: 2022-02-10
