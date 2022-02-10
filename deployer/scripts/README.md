@@ -28,7 +28,7 @@ path 설정 및 git download
 ```ShellSession
 mkdir /playcecloud
 cd /playcecloud
-git clone -b dev https://github.com/OpenSourceConsulting/PlayceKube.git
+git clone https://github.com/playcecloud/playcekube.git
 cd PlayceKube/deployer/scripts
 ```
 

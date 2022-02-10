@@ -5,7 +5,7 @@ private helm repo 에 있는 chart 를 이용하여 설치
 ## 공통 준비작업
 
 ```ShellSession
-git clone -b dev https://github.com/OpenSourceConsulting/PlayceKube.git
+git clone https://github.com/playcecloud/playcekube.git
 cd PlayceKube
 cd kube-packages/curl
 ```

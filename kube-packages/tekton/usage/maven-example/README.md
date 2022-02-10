@@ -7,7 +7,7 @@ tekton 은 k8s crd(custom resource define)를 이용하여 태스크 및 파이�
 
 ```ShellSession
 
-git clone -b dev https://github.com/OpenSourceConsulting/PlayceKube.git
+git clone https://github.com/playcecloud/playcekube.git
 cd PlayceKube
 cd kube-packages/tekton
 cd usage/maven-example

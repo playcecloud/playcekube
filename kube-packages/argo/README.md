@@ -6,7 +6,7 @@ https://argoproj.github.io/argo-helm argo-cd helm chart를 사설 chart repo 에
 ## 공통 준비작업
 
 ```ShellSession
-git clone -b dev https://github.com/OpenSourceConsulting/PlayceKube.git
+git clone https://github.com/playcecloud/playcekube.git
 cd PlayceKube
 cd kube-packages/argo
 ```

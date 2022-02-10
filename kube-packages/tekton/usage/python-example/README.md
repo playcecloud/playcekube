@@ -7,7 +7,7 @@
 
 ```ShellSession
 
-git clone -b dev https://github.com/OpenSourceConsulting/PlayceKube.git
+git clone https://github.com/playcecloud/playcekube.git
 cd PlayceKube
 cd kube-packages/tekton
 cd usage/python-example

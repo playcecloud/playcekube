@@ -8,7 +8,7 @@ spec:
   type: git
   params:
     - name: url
-      value: https://github.com/OpenSourceConsulting/PlayceKube.git
+      value: https://github.com/OpenSourceConsulting/playcekube.git
     - name: revision
       value: dev
 ---
