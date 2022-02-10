@@ -1,0 +1,13 @@
+# ignore dir
+deployer/kubespray/inventory*
+deployer/certification/certs*
+deployer/certification/CA/playcekube_rootca.index
+deployer/certification/CA/playcekube_rootca.index*
+deployer/certification/CA/playcekube_rootca.srl
+deployer/certification/intermediateCA*
+deployer/nginx/ssl/repositories.playcekube.local*
+deployer/registry/registry.playcekube.local*
+deployer/bind9/cache*
+deployer/bind9/config*
+kube-packages/**/installed-values.yaml
+**/.git/*
