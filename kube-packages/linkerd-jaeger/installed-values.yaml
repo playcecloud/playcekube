@@ -1,0 +1,136 @@
+# -- Set to false when installing in a custom namespace.
+installNamespace: false
+# Default values for tracing.
+
+namespace: linkerd-jaeger
+
+# -- Namespace of the Linkerd core control-plane install
+linkerdNamespace: linkerd
+
+# -- Default nodeSelector section, See the
+# [K8S documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector) for more information
+nodeSelector: &default_node_selector
+  beta.kubernetes.io/os: linux
+
+# -- Default tolerations section, See the
+# [K8S documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+# for more information
+tolerations: &default_tolerations
+
+# -- Create Roles and RoleBindings to associate this extension's
+# ServiceAccounts to the control plane PSP resource. This requires that
+# `enabledPSP` is set to true on the control plane install. Note PSP has been
+# deprecated since k8s v1.21
+enablePSP: false
+
+collector:
+  # -- Set to false to exclude collector installation
+  enabled: true
+  image:
+    name: registry.playcekube.local:5000/otel/opentelemetry-collector
+    version: 0.27.0
+    pullPolicy: Always
+
+  # -- NodeSelector section, See the
+  # [K8S documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector) for more information
+  nodeSelector: *default_node_selector
+  # -- Tolerations section, See the
+  # [K8S documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+  # for more information
+  tolerations: *default_tolerations
+
+  # -- OpenTelemetry Collector config, See the
+  # [Configuration docs](https://opentelemetry.io/docs/collector/configuration/)
+  # for more information
+  # @default -- see `value.yaml` for actual configuration
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+      opencensus:
+      zipkin:
+      jaeger:
+        protocols:
+          grpc:
+          thrift_http:
+          thrift_compact:
+          thrift_binary:
+    processors:
+      batch:
+    extensions:
+      health_check:
+    exporters:
+      jaeger:
+        endpoint: jaeger.${POD_NAMESPACE}:14250
+        insecure: true
+    service:
+      extensions: [health_check]
+      pipelines:
+        traces:
+          receivers: [otlp,opencensus,zipkin,jaeger]
+          processors: [batch]
+          exporters: [jaeger]
+
+jaeger:
+  # -- Set to false to exclude all-in-one Jaeger installation
+  enabled: true
+  image:
+    name: registry.playcekube.local:5000/jaegertracing/all-in-one
+    version: 1.19.2
+    pullPolicy: Always
+
+  # -- CLI arguments for Jaeger, See [Jaeger AIO Memory CLI reference](https://www.jaegertracing.io/docs/1.24/cli/#jaeger-all-in-one-memory)
+  args:
+    - --query.base-path=/jaeger
+
+  # -- NodeSelector section, See the
+  # [K8S documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector) for more information
+  nodeSelector: *default_node_selector
+  # -- Tolerations section, See the
+  # [K8S documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+  # for more information
+  tolerations: *default_tolerations
+
+linkerdVersion: &linkerd_version stable-2.11.1
+
+webhook:
+  externalSecret: false
+  # -- if empty, Helm will auto-generate these fields
+  crtPEM: |
+
+  keyPEM: |
+
+  # -- if empty, Helm will auto-generate this field, unless externalSecret is set to true.
+  caBundle: |
+
+  # -- collector service address for the proxies to send trace data.
+  # Points by default to the the linkerd-jaeger collector
+  collectorSvcAddr: collector.linkerd-jaeger:55678
+  # -- service account associated with the collector instance
+  collectorSvcAccount: collector
+
+  failurePolicy: Ignore
+  image:
+    name: registry.playcekube.local:5000/linkerd/jaeger-webhook
+    version: *linkerd_version
+    pullPolicy: IfNotPresent
+  logLevel: info
+
+  namespaceSelector:
+    #matchExpressions:
+    #- key: runlevel
+    #  operator: NotIn
+    #  values: ["0","1"]
+  objectSelector:
+    #matchLabels:
+    #  foo: bar
+
+  # -- NodeSelector section, See the
+  # [K8S documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector) for more information
+  nodeSelector: *default_node_selector
+  # -- Tolerations section, See the
+  # [K8S documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+  # for more information
+  tolerations: *default_tolerations
