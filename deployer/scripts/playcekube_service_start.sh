@@ -55,7 +55,7 @@ EOF
 # hosts modify
 sed -i "/registry.${PLAYCE_DOMAIN}/d" /etc/hosts
 cat << EOF >> /etc/hosts
-${DEPLOYER_SERVER} registry.${PLAYCE_DOMAIN} repository.${PLAYCE_DOMAIN} repositories.${PLAYCE_DOMAIN}
+${PLAYCE_DEPLOYER} registry.${PLAYCE_DOMAIN} repository.${PLAYCE_DOMAIN} repositories.${PLAYCE_DOMAIN}
 EOF
 
 # binary copy

@@ -27,9 +27,9 @@ PLAYCEKUBE_VERSION=kv1.22.5
 # download data file
 mkdir -p /playcecloud/downloadsrc
 cd /playcecloud/downloadsrc
-curl -LO http://download.playcecloud.io/playcekube/PlayceKubeData.K8SRepo.{version}.tar
-curl -LO http://download.playcecloud.io/playcekube/PlayceKubeData.OSRepo.{version}.tar
-curl -LO http://download.playcecloud.io/playcekube/PlayceKubeData.Registry.{version}.tar
+curl -LO http://download.playcecloud.io:13300/playcekube/PlayceKubeData.K8SRepo.{version}.tar
+curl -LO http://download.playcecloud.io:13300/playcekube/PlayceKubeData.OSRepo.{version}.tar
+curl -LO http://download.playcecloud.io:13300/playcekube/PlayceKubeData.Registry.{version}.tar
 
 # install script
 cd /playcecloud/playcekube

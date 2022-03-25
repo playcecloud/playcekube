@@ -7,6 +7,14 @@ fi
 
 #KUBESPRAY_ENV=
 
+# set env file
+while getopts ":f:e:" OPT; do
+  case ${OPT} in
+    f) KUBESPRAY_ENV=${OPTARG}
+    ;;
+  esac
+done
+
 if [[ "${KUBESPRAY_ENV}" == "" ]]; then
   echo "KUBESPRAY_ENV environments required"
   exit 1;

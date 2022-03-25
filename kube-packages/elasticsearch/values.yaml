@@ -65,7 +65,7 @@ hostAliases: []
 #  - "bar.local"
 
 image: "docker.elastic.co/elasticsearch/elasticsearch"
-imageTag: "7.16.3"
+imageTag: "7.17.1"
 imagePullPolicy: "IfNotPresent"
 
 podAnnotations:
@@ -191,6 +191,9 @@ service:
   labels: {}
   labelsHeadless: {}
   type: ClusterIP
+  # Consider that all endpoints are considered "ready" even if the Pods themselves are not
+  # https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceSpec
+  publishNotReadyAddresses: false
   nodePort: ""
   annotations: {}
   httpPortName: http
@@ -230,7 +233,7 @@ readinessProbe:
   successThreshold: 3
   timeoutSeconds: 5
 
-# https://www.elastic.co/guide/en/elasticsearch/reference/7.16/cluster-health.html#request-params wait_for_status
+# https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cluster-health.html#request-params wait_for_status
 clusterHealthCheckParams: "wait_for_status=green&timeout=1s"
 
 ## Use an alternate scheduler.

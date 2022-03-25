@@ -55,6 +55,11 @@ alertmanager:
   ##
   priorityClassName: ""
 
+  ## Custom HTTP headers for Readiness Probe
+  ##
+  ## Useful for providing HTTP Basic Auth to healthchecks
+  probeHeaders: []
+
   ## Additional alertmanager container arguments
   ##
   extraArgs: {}
@@ -659,7 +664,7 @@ server:
   ##
   image:
     repository: quay.io/prometheus/prometheus
-    tag: v2.31.1
+    tag: v2.34.0
     pullPolicy: IfNotPresent
 
   ## prometheus server priorityClassName
@@ -697,6 +702,11 @@ server:
   ##       name: mysecret
   ##       key: username
   env: []
+
+  # List of flags to override default parameters, e.g:
+  # - --enable-feature=agent
+  # - --storage.agent.retention.max-time=30m
+  defaultFlagsOverride: []
 
   extraFlags:
     - web.enable-lifecycle
@@ -1035,6 +1045,9 @@ server:
   # When hostNetwork is enabled, you probably want to set this to ClusterFirstWithHostNet
   dnsPolicy: ClusterFirst
 
+  # Use hostPort
+  # hostPort: 9090
+
   ## Vertical Pod Autoscaler config
   ## Ref: https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler
   verticalAutoscaler:
@@ -1352,6 +1365,9 @@ alertmanagerFiles:
       group_interval: 5m
       receiver: default-receiver
       repeat_interval: 3h
+
+## Prometheus server ConfigMap entries for rule files (allow prometheus labels interpolation)
+ruleFiles: {}
 
 ## Prometheus server ConfigMap entries
 ##
@@ -1842,6 +1858,20 @@ grafana:
         datasource: Prometheus
   downloadDashboardsImage:
     repository: curlimages/curl
+  grafana.ini:
+    paths:
+      data: /var/lib/grafana/
+      logs: /var/log/grafana
+      plugins: /var/lib/grafana/plugins
+      provisioning: /etc/grafana/provisioning
+    analytics:
+      check_for_updates: true
+    log:
+      mode: console
+    grafana_net:
+      url: https://grafana.net
+    dashboards:
+      default_home_dashboard_path: /var/lib/grafana/dashboards/default/kubernetes-dashboard.json
 # kube state metrics
 kube-state-metrics:
   image:
