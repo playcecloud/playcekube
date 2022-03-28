@@ -80,8 +80,8 @@ Playce Kube를 설치하려면 먼저 호스트 머신에서 몇 가지 기본 �
 1. deploy 템플릿용 디렉터리를 생성하고 해당 디렉토리로 이동합니다.
 
    ```shell
-   $ mkdir /placecloud
-   $ cd /placecloud
+   $ mkdir /playceloud
+   $ cd /playceloud
    ```
 
 2. Playce Kube용 프로젝트를 아래의 사이트에서 clone 합니다.
