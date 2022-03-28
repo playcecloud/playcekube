@@ -1,7 +1,7 @@
 $ORIGIN playcekube.local.
 $TTL 86400      ; 1 day
 @                               IN SOA   ns.playcekube.local. root.playcekube.local. (
-                                2022032401  ; serial
+                                2022032801  ; serial
                                 10800       ; refresh (3 hours)
                                 900         ; retry (15 minutes)
                                 604800      ; expire (1 week)

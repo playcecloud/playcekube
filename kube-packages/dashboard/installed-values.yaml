@@ -20,7 +20,7 @@
 image:
   ## Repository for container
   repository: registry.playcekube.local:5000/kubernetesui/dashboard
-  tag: v2.4.0
+  tag: v2.5.1
   pullPolicy: IfNotPresent
   pullSecrets: []
 

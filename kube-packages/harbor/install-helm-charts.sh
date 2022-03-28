@@ -28,7 +28,7 @@ sed -i "s/registry: .*/registry: registry.${PLAYCE_DOMAIN}:5000/g" ${BASEDIR}/in
 grep -A 3 -n "persistence:" ${BASEDIR}/installed-values.yaml | grep "enabled:" | sed "s/\([0-9]*\).*/\1/g" | sort -r -n | xargs -i sed -i "{}s/enabled:.*/enabled: false/g" ${BASEDIR}/installed-values.yaml
 
 # admin password
-sed -i "s/harborAdminPassword: .*/harborAdminPassword: oscadmin/g" ${BASEDIR}/installed-values.yaml
+sed -i "s/^adminPassword: .*/adminPassword: oscadmin/g" ${BASEDIR}/installed-values.yaml
 
 # create tls harbor
 ${PLAYCE_DIR}/playcekube/deployer/certification/01-create-ca-signed-cert.sh harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN} DNS:core.harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN},DNS:notary.harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN},DNS:harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}
@@ -37,22 +37,24 @@ ${PLAYCE_DIR}/playcekube/deployer/certification/01-create-ca-signed-cert.sh harb
 kubectl create ns harbor
 
 # create tls secret
-kubectl -n harbor create secret tls harbor-tls --cert=${PLAYCE_DIR}/playcekube/deployer/certification/certs/harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}.crt --key=${PLAYCE_DIR}/playcekube/deployer/certification/certs/harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}.key
+kubectl -n harbor create secret tls harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}-tls --cert=${PLAYCE_DIR}/playcekube/deployer/certification/certs/harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}.crt --key=${PLAYCE_DIR}/playcekube/deployer/certification/certs/harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}.key
 
-# service mode ingress
-grep -A 3 -n "^service:" ${BASEDIR}/installed-values.yaml | grep "type:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/type: .*/type: Ingress/" ${BASEDIR}/installed-values.yaml
-
-# tls secret setting
-grep -A 20 -n "^service:" ${BASEDIR}/installed-values.yaml | grep "existingSecret:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/existingSecret: .*/existingSecret: harbor-tls/" ${BASEDIR}/installed-values.yaml
-grep -A 20 -n "^service:" ${BASEDIR}/installed-values.yaml | grep "notaryExistingSecret:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/notaryExistingSecret: .*/notaryExistingSecret: harbor-tls/" ${BASEDIR}/installed-values.yaml
+# service mode ClusterIP
+grep -A 3 -n "^service:" ${BASEDIR}/installed-values.yaml | grep "type:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/type: .*/type: ClusterIP/" ${BASEDIR}/installed-values.yaml
 
 # ingress enable
-grep -A 3 -n "^ingress:" ${BASEDIR}/installed-values.yaml | grep "enabled:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/enabled: .*/enabled: true/" ${BASEDIR}/installed-values.yaml
+sed -i "s/^exposureType: .*/exposureType: ingress/g" ${BASEDIR}/installed-values.yaml
 
 # ingress hosts setting
-grep -A 20 -n "^ingress:" ${BASEDIR}/installed-values.yaml | grep "core:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/core: .*/core: harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}/" ${BASEDIR}/installed-values.yaml
-grep -A 20 -n "^ingress:" ${BASEDIR}/installed-values.yaml | grep "notary:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/notary: .*/notary: notary.harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}/" ${BASEDIR}/installed-values.yaml
 sed -i "s|^externalURL: .*|externalURL: https://harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}|g" ${BASEDIR}/installed-values.yaml
+## core
+grep -A 20 -n "^  core:" ${BASEDIR}/installed-values.yaml | grep "hostname:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/hostname: .*/hostname: harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}/" ${BASEDIR}/installed-values.yaml
+grep -A 90 -n "^  core:" ${BASEDIR}/installed-values.yaml | grep "tls:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/tls: .*/tls: true/" ${BASEDIR}/installed-values.yaml
+grep -A 90 -n "^  core:" ${BASEDIR}/installed-values.yaml | grep "  extraTls:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/\(.*\)extraTls:.*/\1extraTls:\n\1  - hosts:\n\1      - harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}\n\1    secretName: harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}-tls/" ${BASEDIR}/installed-values.yaml
+## notary
+grep -A 20 -n "^  notary:" ${BASEDIR}/installed-values.yaml | grep "hostname:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/hostname: .*/hostname: notary.harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}/" ${BASEDIR}/installed-values.yaml
+grep -A 90 -n "^  notary:" ${BASEDIR}/installed-values.yaml | grep "tls:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/tls: .*/tls: true/" ${BASEDIR}/installed-values.yaml
+grep -A 90 -n "^  notary:" ${BASEDIR}/installed-values.yaml | grep "  extraTls:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/\(.*\)extraTls:.*/\1extraTls:\n\1  - hosts:\n\1      - notary.harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}\n\1    secretName: harbor.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}-tls/" ${BASEDIR}/installed-values.yaml
 
 # install
 helm install harbor playcekube/harbor -n harbor -f ${BASEDIR}/installed-values.yaml

@@ -10,8 +10,8 @@ systemctl enable chronyd --now
 systemctl restart chronyd
 
 # registry container restart
-docker stop playcekube_registry
-docker rm playcekube_registry
+docker stop playcekube_registry 2> /dev/null
+docker rm playcekube_registry 2> /dev/null
 docker run -d --name playcekube_registry \
 --restart always \
 -v ${PLAYCE_DIR}/playcekube/deployer/registry:/etc/docker/registry \
@@ -20,8 +20,8 @@ docker run -d --name playcekube_registry \
 docker.io/library/registry:2.7.1
 
 # dns(bind9) container restart
-docker stop playcekube_bind9
-docker rm playcekube_bind9
+docker stop playcekube_bind9 2> /dev/null
+docker rm playcekube_bind9 2> /dev/null
 docker run -d --name playcekube_bind9 \
 --restart always \
 -e TZ=Asia/Seoul \
@@ -33,8 +33,8 @@ docker run -d --name playcekube_bind9 \
 docker.io/ubuntu/bind9:9.16-21.10_edge
 
 # repository (nginx) container restart
-docker stop playcekube_repositories
-docker rm playcekube_repositories
+docker stop playcekube_repositories 2> /dev/null
+docker rm playcekube_repositories 2> /dev/null
 docker run -d --name playcekube_repositories \
 --restart always \
 -v ${PLAYCE_DIR}/playcekube/deployer/nginx/repositories.conf:/etc/nginx/nginx.conf \

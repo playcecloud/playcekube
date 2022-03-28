@@ -53,3 +53,7 @@ if ! isActiveDNS || ! isActiveRepository || ! isActiveRegistry; then
   exit 1;
 fi
 
+echo ""
+echo "######## PlayceKube installed successfully ########"
+echo ""
+
