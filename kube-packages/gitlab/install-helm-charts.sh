@@ -47,6 +47,10 @@ cat << EOF >> ${BASEDIR}/installed-values.yaml
     image:
       repository: registry.${PLAYCE_DOMAIN}:5000/gitlab-org/build/cng/gitaly
 
+# disable persistence
+    persistence:
+      enabled: false
+
   praefect:
     image:
       repository: registry.${PLAYCE_DOMAIN}:5000/gitlab-org/build/cng/gitaly
@@ -62,6 +66,11 @@ redis:
   metrics:
     image:
       registry: registry.${PLAYCE_DOMAIN}:5000
+
+# disable persistence
+  master:
+    persistence:
+      enabled: false
   
 postgresql:
   image:
@@ -70,12 +79,19 @@ postgresql:
   metrics:
     image:
       registry: registry.${PLAYCE_DOMAIN}:5000
+# disable persistence
+  persistence:
+    enabled: false
 
 minio:
   image: registry.${PLAYCE_DOMAIN}:5000/minio/minio
   
   minioMc:
      image: registry.${PLAYCE_DOMAIN}:5000/minio/mc
+
+# disable persistence
+  persistence:
+    enabled: false
 
 EOF
 sed -i "/^gitlab-runner:/a\  image: registry.${PLAYCE_DOMAIN}:5000/gitlab/gitlab-runner:alpine-v14.8.0" ${BASEDIR}/installed-values.yaml
@@ -87,6 +103,7 @@ grep -A 3 -n "^prometheus:" ${BASEDIR}/installed-values.yaml | grep "install:" |
 grep -A 6 -n "^certmanager:" ${BASEDIR}/installed-values.yaml | grep "install:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/install: .*/install: false/g" ${BASEDIR}/installed-values.yaml
 
 # default config
+sed -i "s/initialRootPassword: .*/initialRootPassword: {key: oscadmin}/g" ${BASEDIR}/installed-values.yaml
 sed -i "s/  edition: .*/  edition: ce/g" ${BASEDIR}/installed-values.yaml
 grep -A 10 -n "  ingress:" ${BASEDIR}/installed-values.yaml | grep "configureCertmanager:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/configureCertmanager: .*/configureCertmanager: false/g" ${BASEDIR}/installed-values.yaml
 
@@ -101,7 +118,7 @@ kubectl create ns gitlab
 kubectl create secret generic os-root-ca --from-file=ca-bundle.crt=/etc/ssl/certs/ca-bundle.crt --from-file=ca-certificates.crt=/etc/ssl/certs/ca-bundle.crt -n gitlab
 
 # create tls gitlab
-${PLAYCE_DIR}/playcekube/deployer/certification/01-create-ca-signed-cert.sh gitlab.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN} DNS:gitlab.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}
+${PLAYCE_DIR}/playcekube/deployer/certification/01-create-ca-signed-cert.sh gitlab.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN} DNS:gitlab.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN},DNS:*.gitlab.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}
 
 # create tls secret
 kubectl -n gitlab create secret tls gitlab-tls --cert=${PLAYCE_DIR}/playcekube/deployer/certification/certs/gitlab.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}.crt --key=${PLAYCE_DIR}/playcekube/deployer/certification/certs/gitlab.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}.key
@@ -111,6 +128,7 @@ grep -A 8 -n "^  ingress:" ${BASEDIR}/installed-values.yaml | grep "class:" | se
 
 # ingress hosts setting
 grep -A 3 -n "^  hosts:" ${BASEDIR}/installed-values.yaml | grep "domain:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/domain: .*/domain: gitlab.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}/g" ${BASEDIR}/installed-values.yaml
+grep -A 12 -n "^  hosts:" ${BASEDIR}/installed-values.yaml | grep "gitlab:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/gitlab: .*/gitlab: {name: gitlab.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}}/g" ${BASEDIR}/installed-values.yaml
 grep -A 15 -n "^  ingress:" ${BASEDIR}/installed-values.yaml | grep "tls:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/tls: .*/tls:/" ${BASEDIR}/installed-values.yaml
 grep -A 15 -n "^  ingress:" ${BASEDIR}/installed-values.yaml | grep "tls:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}a\      enabled: true\n      secretName: gitlab-tls\n" ${BASEDIR}/installed-values.yaml
 

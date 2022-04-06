@@ -61,7 +61,7 @@ diagnosticMode:
 
 ## @param adminPassword The initial password of Harbor admin. Change it from portal after launching Harbor
 ##
-adminPassword: ""
+adminPassword: oscadmin
 ## @param externalURL The external URL for Harbor Core service
 ## It is used to
 ## 1) populate the docker/helm commands showed on portal
@@ -637,7 +637,7 @@ volumePermissions:
   image:
     registry: registry.playcekube.local:5000
     repository: bitnami/bitnami-shell
-    tag: 10-debian-10-r370
+    tag: 10-debian-10-r377
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -681,7 +681,7 @@ nginx:
   image:
     registry: registry.playcekube.local:5000
     repository: bitnami/nginx
-    tag: 1.21.6-debian-10-r50
+    tag: 1.21.6-debian-10-r57
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -946,7 +946,7 @@ portal:
   image:
     registry: registry.playcekube.local:5000
     repository: bitnami/harbor-portal
-    tag: 2.4.2-debian-10-r2
+    tag: 2.4.2-debian-10-r9
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -1206,7 +1206,7 @@ core:
   image:
     registry: registry.playcekube.local:5000
     repository: bitnami/harbor-core
-    tag: 2.4.2-debian-10-r2
+    tag: 2.4.2-debian-10-r9
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -1495,7 +1495,7 @@ jobservice:
   image:
     registry: registry.playcekube.local:5000
     repository: bitnami/harbor-jobservice
-    tag: 2.4.2-debian-10-r2
+    tag: 2.4.2-debian-10-r9
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -1940,7 +1940,7 @@ registry:
     image:
       registry: registry.playcekube.local:5000
       repository: bitnami/harbor-registry
-      tag: 2.4.2-debian-10-r2
+      tag: 2.4.2-debian-10-r9
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
       ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -2085,7 +2085,7 @@ registry:
     image:
       registry: registry.playcekube.local:5000
       repository: bitnami/harbor-registryctl
-      tag: 2.4.2-debian-10-r2
+      tag: 2.4.2-debian-10-r9
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
       ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -2226,7 +2226,7 @@ chartmuseum:
   image:
     registry: registry.playcekube.local:5000
     repository: bitnami/chartmuseum
-    tag: 0.14.0-debian-10-r45
+    tag: 0.14.0-debian-10-r52
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -2671,7 +2671,7 @@ clair:
     image:
       registry: registry.playcekube.local:5000
       repository: bitnami/harbor-adapter-clair
-      tag: 2.4.2-debian-10-r3
+      tag: 2.4.2-debian-10-r10
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
       ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -2810,7 +2810,7 @@ clair:
     image:
       registry: registry.playcekube.local:5000
       repository: bitnami/harbor-clair
-      tag: 2.4.2-debian-10-r2
+      tag: 2.4.2-debian-10-r9
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
       ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -2965,7 +2965,7 @@ notary:
     image:
       registry: registry.playcekube.local:5000
       repository: bitnami/harbor-notary-server
-      tag: 2.4.2-debian-10-r2
+      tag: 2.4.2-debian-10-r9
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
       ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -3202,7 +3202,7 @@ notary:
     image:
       registry: registry.playcekube.local:5000
       repository: bitnami/harbor-notary-signer
-      tag: 2.4.2-debian-10-r2
+      tag: 2.4.2-debian-10-r9
       ## Specify a imagePullPolicy
       ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
       ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -3452,7 +3452,7 @@ trivy:
   image:
     registry: registry.playcekube.local:5000
     repository: bitnami/harbor-adapter-trivy
-    tag: 2.4.2-debian-10-r1
+    tag: 2.4.2-debian-10-r8
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -3760,7 +3760,7 @@ exporter:
   image:
     registry: registry.playcekube.local:5000
     repository: bitnami/harbor-exporter
-    tag: 2.4.2-debian-10-r2
+    tag: 2.4.2-debian-10-r9
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
@@ -4001,13 +4001,14 @@ postgresql:
   image:
     registry: registry.playcekube.local:5000
     repository: bitnami/postgresql
-    tag: 11.15.0-debian-10-r36
+    tag: 11.15.0-debian-10-r44
   auth:
     enablePostgresUser: true
     postgresPassword: not-secure-database-password
     existingSecret: ""
   architecture: standalone
   primary:
+    persistence: {enabled: false}
     extendedConfiguration: |
       max_connections = 1024
     initdb:
@@ -4073,6 +4074,7 @@ externalDatabase:
 ## @param redis.architecture Redis&trade; architecture. Allowed values: `standalone` or `replication`
 ##
 redis:
+  master: {persistence: {enabled: false}}
   enabled: true
   auth:
     enabled: false

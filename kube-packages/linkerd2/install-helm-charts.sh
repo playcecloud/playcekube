@@ -38,10 +38,11 @@ rm -rf ${PLAYCE_DIR}/playcekube/deployer/certification/intermediateCA/linkerd2-i
 ${PLAYCE_DIR}/playcekube/deployer/certification/00-create-intermediate-ca.sh linkerd2-issuer
 
 # install
-helm install linkerd playcekube/linkerd2 \
+helm upgrade --install linkerd playcekube/linkerd2 \
  -n linkerd \
- --set-file identityTrustAnchorsPEM=${PLAYCE_DIR}/playcekube/deployer/certification/CA/playcekube_rootca.crt \
+ --set-file identityTrustAnchorsPEM=${PLAYCE_DIR}/playcekube/deployer/certification/intermediateCA/linkerd2-issuer.crt \
  --set-file identity.issuer.tls.crtPEM=${PLAYCE_DIR}/playcekube/deployer/certification/intermediateCA/linkerd2-issuer.crt \
  --set-file identity.issuer.tls.keyPEM=${PLAYCE_DIR}/playcekube/deployer/certification/intermediateCA/linkerd2-issuer.key \
+ --set identity.issuer.crtExpiry=$(date -d '+8760 hour' +"%Y-%m-%dT%H:%M:%SZ") \
  -f ${BASEDIR}/installed-values.yaml
 

@@ -1,3 +1,4 @@
+customLabels: {}
 image:
     nfs:
         repository: registry.playcekube.local:5000/k8s/csi/nfs-csi
@@ -42,11 +43,15 @@ controller:
     healthPort: 29652
   logLevel: 5
   workingMountDir: "/tmp"
+  dnsPolicy: Default  # available values: Default, ClusterFirstWithHostNet, ClusterFirst
   tolerations:
     - key: "node-role.kubernetes.io/master"
       operator: "Exists"
       effect: "NoSchedule"
     - key: "node-role.kubernetes.io/controlplane"
+      operator: "Exists"
+      effect: "NoSchedule"
+    - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
       effect: "NoSchedule"
   resources:
@@ -71,6 +76,7 @@ controller:
 
 node:
   name: csi-nfs-node
+  dnsPolicy: Default  # available values: Default, ClusterFirstWithHostNet, ClusterFirst
   maxUnavailable: 1
   logLevel: 5
   livenessProbe:

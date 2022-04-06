@@ -26,9 +26,17 @@ sed -i "s|registry: prom|registry: registry.${PLAYCE_DOMAIN}:5000/prom|g" ${BASE
 sed -i "s/^namespace: .*/namespace: linkerd-viz/" ${BASEDIR}/installed-values.yaml
 sed -i "s/^linkerdNamespace: .*/linkerdNamespace: linkerd/" ${BASEDIR}/installed-values.yaml
 sed -i "s/^installNamespace: .*/installNamespace: false/" ${BASEDIR}/installed-values.yaml
+# enforce host
+sed -i "s/enforcedHostRegexp: .*/enforcedHostRegexp: linkerd.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}/" ${BASEDIR}/installed-values.yaml
 
 # create namespace
 kubectl create ns linkerd-viz
+
+# create tls linkerd
+${PLAYCE_DIR}/playcekube/deployer/certification/01-create-ca-signed-cert.sh linkerd.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN} DNS:linkerd.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}
+
+# create tls secret
+kubectl -n linkerd-viz create secret tls linkerd-tls --cert=${PLAYCE_DIR}/playcekube/deployer/certification/certs/linkerd.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}.crt --key=${PLAYCE_DIR}/playcekube/deployer/certification/certs/linkerd.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}.key
 
 # install
 helm install linkerd-viz playcekube/linkerd-viz -n linkerd-viz -f ${BASEDIR}/installed-values.yaml

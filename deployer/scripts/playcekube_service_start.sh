@@ -6,7 +6,6 @@ if [ -f ${BASEDIR}/../../playcekube.conf ]; then
 fi
 
 # ntp(chrony) server restart
-systemctl enable chronyd --now
 systemctl restart chronyd
 
 # registry container restart

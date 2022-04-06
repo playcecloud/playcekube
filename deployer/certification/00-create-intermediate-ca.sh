@@ -26,7 +26,7 @@ openssl ca -config ${BASEDIR}/openssl_certs.cnf \
   -batch \
   -extensions v3_intermediate_ca \
   -days 3650 \
-  -cert ${CADIR}/playcekube_rootca.crt -keyfile ${CADIR}/playcekube_rootca.key \
+  -cert ${CADIR}/playcekube_rootca_ecdsa.crt -keyfile ${CADIR}/playcekube_rootca_ecdsa.key \
   -in ${CERTSDIR}/${CANAME}.csr -out ${CERTSDIR}/${CANAME}.crt
 
 

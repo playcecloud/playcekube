@@ -275,7 +275,7 @@ dashboard:
   # -- Host header validation regex for the dashboard. See the [Linkerd
   # documentation](https://linkerd.io/2/tasks/exposing-dashboard) for more
   # information
-  enforcedHostRegexp: ""
+  enforcedHostRegexp: linkerd.playcek8s.playcekube.local
   resources:
     cpu:
       # -- Maximum amount of CPU units that the web container can use

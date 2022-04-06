@@ -96,6 +96,13 @@ enabled=1
 gpgcheck=0
 EOF
 
+[epel]
+name=CentOS-\$releasever - EPEL
+baseurl=file://${PLAYCE_DATADIR}/repositories/${CHECKOSFAMILY}${CHECKOSVERSION}/epel
+enabled=1
+gpgcheck=0
+EOF
+
   fi
 fi
 
@@ -114,9 +121,12 @@ fi
 
 # duplicate remove
 ${PKGCMD} -y remove dnsmasq podman libvirt
+${PKGCMD} clean all
+
+# requirements install
+${PKGCMD} -y install jq tar git wget
 
 # install docker-ce
-${PKGCMD} clean all
 ${PKGCMD} -y install docker-ce
 systemctl enable docker --now
 systemctl restart docker
@@ -135,6 +145,13 @@ fi
 # chrony config
 sed -i "s/^#allow .*/allow 0.0.0.0\/0/g" /etc/chrony.conf
 sed -i "s/^#local stratum .*/local stratum 8/g" /etc/chrony.conf
+
+# chrony start
+systemctl enable chronyd --now
+systemctl restart chronyd
+
+# sync
+chronyc sources
 
 # certs dir create
 mkdir -p ${PLAYCE_DIR}/playcekube/deployer/certification/certs
@@ -348,6 +365,13 @@ name=CentOS-$releasever - Extras
 baseurl=https://repositories.${PLAYCE_DOMAIN}/centos7/extras
 enabled=1
 gpgcheck=0
+
+[epel]
+name=CentOS-$releasever - EPEL
+baseurl=https://repositories.${PLAYCE_DOMAIN}/centos7/epel
+enabled=1
+gpgcheck=0
+
 EOF
 
 # cri-o

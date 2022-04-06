@@ -86,3 +86,29 @@ EOF
 docker restart playcekube_bind9
 
 
+# default addons install
+## ingress install
+${PLAYCE_DIR}/playcekube/kube-packages/ingress-nginx/install-helm-charts.sh
+
+## csi-nfs-driver install
+${PLAYCE_DIR}/playcekube/kube-packages/csi-driver-nfs/install-helm-charts.sh
+
+## dashboard install
+${PLAYCE_DIR}/playcekube/kube-packages/dashboard/install-helm-charts.sh
+
+## prometheus install
+${PLAYCE_DIR}/playcekube/kube-packages/prometheus/install-helm-charts.sh
+
+## linkerd install
+${PLAYCE_DIR}/playcekube/kube-packages/linkerd2/install-helm-charts.sh
+kubectl wait --for=condition=available deployment.apps/linkerd-destination -n linkerd
+${PLAYCE_DIR}/playcekube/kube-packages/linkerd-viz/install-helm-charts.sh
+${PLAYCE_DIR}/playcekube/kube-packages/linkerd-jaeger/install-helm-charts.sh
+${PLAYCE_DIR}/playcekube/kube-packages/linkerd-multicluster/install-helm-charts.sh
+
+## kubeapps install
+${PLAYCE_DIR}/playcekube/kube-packages/kubeapps/install-helm-charts.sh
+
+## velero install
+${PLAYCE_DIR}/playcekube/kube-packages/velero/install-helm-charts.sh
+

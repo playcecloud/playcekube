@@ -53,6 +53,13 @@ spec:
       script: |
         #!/usr/bin/env sh
         echo "##### image build start"
+        ls -l /
+        ls -l /workspace
+        ls -l /workspace/workspace
+        ls -l /workspace/output
+        ls -l $(workspaces.workspace.path)
+        ls -l $(workspaces.workspace.path)/source-git
+        ls -l $(workspaces.workspace.path)/$(params.appname)/src
         cd $(workspaces.workspace.path)/$(params.appname)/src
         IMAGE_TAG=$(grep "LABEL version" Dockerfile | sed "s/.*LABEL version=\(.*\)/\1/g")
         docker build -t $(resources.outputs.result-image.url):${IMAGE_TAG} .

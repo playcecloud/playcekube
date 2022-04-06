@@ -19,7 +19,9 @@ CURRENT_CLUSTER=$(kubectl config current-context | sed "s/.*@\(.*\)/\1/")
 # installed-values.yaml private registry setting
 ## linkerd-jaeger
 sed -i "s|name: otel|name: registry.${PLAYCE_DOMAIN}:5000/otel|g" ${BASEDIR}/installed-values.yaml
+sed -i "s|name: omnition|name: registry.${PLAYCE_DOMAIN}:5000/omnition|g" ${BASEDIR}/installed-values.yaml
 sed -i "s|name: jaegertracing|name: registry.${PLAYCE_DOMAIN}:5000/jaegertracing|g" ${BASEDIR}/installed-values.yaml
+sed -i "s|name: cr.l5d.io|name: registry.${PLAYCE_DOMAIN}:5000|g" ${BASEDIR}/installed-values.yaml
 sed -i "s|name: cr.l5d.io|name: registry.${PLAYCE_DOMAIN}:5000|g" ${BASEDIR}/installed-values.yaml
 
 # namespace setting

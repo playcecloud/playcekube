@@ -21,6 +21,9 @@ spec:
       name: build-java
       script: |
         #!/bin/sh
+        ls -l $(workspaces.workspace.path)
+        ls -l $(workspaces.workspace.path)/source-git
+        ls -l $(workspaces.workspace.path)/$(params.appname)/src
         cd $(workspaces.workspace.path)/$(params.appname)/src
         javac **/*.java
 

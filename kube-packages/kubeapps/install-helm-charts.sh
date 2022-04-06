@@ -25,6 +25,9 @@ grep -A 3 -n "^  initialRepos:" ${BASEDIR}/installed-values.yaml | grep "url:" |
 CA_TLS_CERTIFICATE=$(sed "s/^\(.*\)/        \1/g" ${PLAYCE_DIR}/playcekube/deployer/certification/CA/playcekube_rootca.crt | sed -E "s|([/+\])|\\\\\1|g" | sed -z 's/\n/\\n/g')
 grep -A 3 -n "^  initialRepos:" ${BASEDIR}/installed-values.yaml | grep "url:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}a\      caCert: \|-\n${CA_TLS_CERTIFICATE}" ${BASEDIR}/installed-values.yaml
 
+# persistence false
+sed -i "/^postgresql:/a\  primary: {persistence: {enabled: false}}\n  readReplicas: {persistence: {enabled: false}}" ${BASEDIR}/installed-values.yaml
+
 # create namespace
 kubectl create ns kubeapps
 

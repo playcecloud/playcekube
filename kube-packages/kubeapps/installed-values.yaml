@@ -890,23 +890,25 @@ apprepository:
       url: https://repositories.playcekube.local/helm-charts
       caCert: |-
         -----BEGIN CERTIFICATE-----
-        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
+        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
         -----END CERTIFICATE-----
 
   ## @param apprepository.customAnnotations Custom annotations be added to each AppRepository-generated CronJob, Job and Pod
@@ -2004,6 +2006,8 @@ testImage:
 ## @param postgresql.auth.existingSecret Name of existing secret to use for PostgreSQL credentials
 ##
 postgresql:
+  primary: {persistence: {enabled: false}}
+  readReplicas: {persistence: {enabled: false}}
   enabled: true
   architecture: "replication"
   auth:

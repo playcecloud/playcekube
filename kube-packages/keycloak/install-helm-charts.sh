@@ -24,7 +24,7 @@ sed -i "s/adminUser: .*/adminUser: admin/g" ${BASEDIR}/installed-values.yaml
 sed -i "s/adminPassword: .*/adminPassword: oscadmin/g" ${BASEDIR}/installed-values.yaml
 
 # installed-values.yaml persistence volume false settting
-grep -A 3 -n "persistence:" ${BASEDIR}/installed-values.yaml | grep "enabled:" | sed "s/\([0-9]*\).*/\1/g" | sort -r -n | xargs -i sed -i "{}s/enabled:.*/enabled: false/g" ${BASEDIR}/installed-values.yaml
+sed -i "/^postgresql:/a\  primary:\n    persistence:\n      enabled: false" ${BASEDIR}/installed-values.yaml
 
 # create tls keycloak
 ${PLAYCE_DIR}/playcekube/deployer/certification/01-create-ca-signed-cert.sh keycloak.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN} DNS:keycloak.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}
@@ -43,7 +43,7 @@ grep -A 85 -n "^ingress:" ${BASEDIR}/installed-values.yaml | grep "hostname:" | 
 # keycloak ingress tls
 sed -i "s/^proxyAddressForwarding: .*/proxyAddressForwarding: true/" ${BASEDIR}/installed-values.yaml
 grep -A 85 -n "^ingress:" ${BASEDIR}/installed-values.yaml | grep "tls:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/tls: .*/tls: true/" ${BASEDIR}/installed-values.yaml
-grep -A 85 -n "^ingress:" ${BASEDIR}/installed-values.yaml | grep "existingSecret:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/existingSecret: .*/existingSecret: keycloak-tls/" ${BASEDIR}/installed-values.yaml
+grep -A 85 -n "^ingress:" ${BASEDIR}/installed-values.yaml | grep "  extraTls:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/\(.*\)extraTls:.*/\1extraTls:\n\1  - hosts:\n\1      - keycloak.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}\n\1    secretName: keycloak-tls/" ${BASEDIR}/installed-values.yaml
 
 # install
 helm install keycloak playcekube/keycloak -n keycloak -f ${BASEDIR}/installed-values.yaml
