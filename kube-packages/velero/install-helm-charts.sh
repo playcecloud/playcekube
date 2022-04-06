@@ -50,9 +50,9 @@ helm install velero playcekube/velero -n velero -f ${BASEDIR}/installed-values.y
 rm -rf ${BASEDIR}/minio-velero.cfg
 
 # cli install
-tar zxf ${BASEDIR}/velero-v1.7.1-linux-amd64.tar.gz
-mv ${BASEDIR}/velero-v1.7.1-linux-amd64/velero /usr/local/bin/velero
-rm -rf ${BASEDIR}/velero-v1.7.1-linux-amd64
+tar zxf ${BASEDIR}/velero-v1.8.1-linux-amd64.tar.gz
+mv velero-v1.8.1-linux-amd64/velero /usr/local/bin/velero
+rm -rf ${BASEDIR}/velero-v1.8.1-linux-amd64
 
 velero completion bash > /etc/bash_completion.d/velero
 

@@ -10,21 +10,24 @@ fi
 # check info
 RELEASE_NUM=$(getReleaseNumber)
 
+# busybox mode run
+chmod 755 ${PLAYCE_DIR}/playcekube/bin/busybox
+
 # os repository check & untar
 if ! checkRepositoryOSData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.OSRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
   echo "# repository os data untar"
-  tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.OSRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
+  ${PLAYCE_DIR}/playcekube/bin/busybox tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.OSRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
 fi
 
 # kubernetes repository check & untar
 if ! checkRepositoryKubernetesData && ! checkRepositoryHelmChartsData && ! checkRepositoryCrioData && ! checkRepositoryDockerData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.K8SRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
   echo "# kubernetes repository data untar"
-  tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.K8SRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
+  ${PLAYCE_DIR}/playcekube/bin/busybox tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.K8SRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
 fi
 # registry check & untar
 if ! checkRegistryData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.Registry.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
   echo "# registry data untar"
-  tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.Registry.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
+  ${PLAYCE_DIR}/playcekube/bin/busybox tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.Registry.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
 fi
 
 # data check or error

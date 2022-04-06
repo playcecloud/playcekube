@@ -46,3 +46,6 @@ helm upgrade --install linkerd playcekube/linkerd2 \
  --set identity.issuer.crtExpiry=$(date -d '+8760 hour' +"%Y-%m-%dT%H:%M:%SZ") \
  -f ${BASEDIR}/installed-values.yaml
 
+# Ready check
+kubectl wait --for=condition=available deployment.apps/linkerd-destination -n linkerd
+

@@ -33,7 +33,7 @@ kubectl create ns monitoring
 # etcd metrics config
 POD_NAME=$(kubectl get pods -o=jsonpath='{.items[0].metadata.name}' -l component=etcd -n kube-system)
 kubectl create secret generic etcd-client-cert -n monitoring \
-  --from-literal=etcd-ca="$(kubectl exec $${POD_NAME} -n kube-system -- cat /etc/kubernetes/ssl/etcd/ca.crt)" \
+  --from-literal=etcd-ca="$(kubectl exec ${POD_NAME} -n kube-system -- cat /etc/kubernetes/ssl/etcd/ca.crt)" \
   --from-literal=etcd-client="$(kubectl exec ${POD_NAME} -n kube-system -- cat /etc/kubernetes/ssl/etcd/healthcheck-client.crt)" \
   --from-literal=etcd-client-key="$(kubectl exec ${POD_NAME} -n kube-system -- cat /etc/kubernetes/ssl/etcd/healthcheck-client.key)"
 sed -i "s/    secrets: \[\]/    secrets:\n      - \"etcd-client-cert\"/g" ${BASEDIR}/installed-values.yaml
@@ -43,9 +43,9 @@ grep -A 50 -n "^kubeEtcd:" ${BASEDIR}/installed-values.yaml | grep -A 15 "  serv
 grep -A 50 -n "^kubeEtcd:" ${BASEDIR}/installed-values.yaml | grep -A 15 "  serviceMonitor:" | grep "certFile:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s|certFile: .*|certFile: /etc/prometheus/secrets/etcd-client-cert/etcd-client|" ${BASEDIR}/installed-values.yaml
 grep -A 50 -n "^kubeEtcd:" ${BASEDIR}/installed-values.yaml | grep -A 15 "  serviceMonitor:" | grep "keyFile:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s|keyFile: .*|keyFile: /etc/prometheus/secrets/etcd-client-cert/etcd-client-key|" ${BASEDIR}/installed-values.yaml
 
-sed -i "s/additionalScrapeConfigs: .*/additionalScrapeConfigs:/g" ${BASEDIR}/installed-values.yaml
-grep -A 27 -n "additionalScrapeConfigs:" ${BASEDIR}/installed-values.yaml | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{},27s/# /  /g" ${BASEDIR}/installed-values.yaml
-grep -A 27 -n "additionalScrapeConfigs:" ${BASEDIR}/installed-values.yaml | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{},27s/targetLabel/target_label/g" ${BASEDIR}/installed-values.yaml
+sed -i "s/  additionalScrapeConfigs: .*/  additionalScrapeConfigs:/g" ${BASEDIR}/installed-values.yaml
+grep -A 27 -n "  additionalScrapeConfigs:" ${BASEDIR}/installed-values.yaml | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{},27s/# /  /g" ${BASEDIR}/installed-values.yaml
+grep -A 27 -n "  additionalScrapeConfigs:" ${BASEDIR}/installed-values.yaml | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{},27s/targetLabel/target_label/g" ${BASEDIR}/installed-values.yaml
 
 # create tls prometheus
 ${PLAYCE_DIR}/playcekube/deployer/certification/01-create-ca-signed-cert.sh prometheus.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN} DNS:prometheus.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}

@@ -46,3 +46,7 @@ kubectl create ns ingress-nginx
 # install
 helm install ingress-nginx playcekube/ingress-nginx -n ingress-nginx -f ${BASEDIR}/installed-values.yaml
 
+# ready check
+POD_NAME=$(kubectl -n ingress-nginx get pod -o name -l app.kubernetes.io/name=ingress-nginx | head -n 1)
+kubectl wait --for=condition=Ready ${POD_NAME} -n ingress-nginx
+
