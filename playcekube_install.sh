@@ -53,6 +53,53 @@ if ! isActiveDNS || ! isActiveRepository || ! isActiveRegistry; then
   exit 1;
 fi
 
+# binary copy
+echo "######## Kubernetes utils copy ########"
+echo "# copy kubectl"
+K8S_VERSION=${PLAYCEKUBE_VERSION/k/}
+if [ ! -f "${PLAYCE_DIR}/data/repositories/kubernetes/${K8S_VERSION}/kubectl" ]; then
+  mkdir -p ${PLAYCE_DIR}/data/repositories/kubernetes/${K8S_VERSION}
+  cd ${PLAYCE_DIR}/data/repositories/kubernetes/${K8S_VERSION}
+  curl -LO https://dl.k8s.io/release/v1.23.0/bin/linux/amd64/kubectl
+fi
+
+cp --remove-destination ${PLAYCE_DIR}/data/repositories/kubernetes/${K8S_VERSION}/kubectl /usr/local/bin/kubectl
+chmod 755 /usr/local/bin/kubectl
+kubectl completion bash > /etc/bash_completion.d/kubectl
+echo "alias kc=kubectl" >> ~/.bashrc
+echo "complete -F __start_kubectl kc" >> ~/.bashrc
+
+echo "# copy helm"
+HELM_TARFILE=$(ls ${PLAYCE_DIR}/data/repositories/kubernetes/helm/ | head -n 1)
+if [ ! -f "${PLAYCE_DIR}/data/repositories/kubernetes/helm/${HELM_TARFILE}" ]; then
+  mkdir -p ${PLAYCE_DIR}/data/repositories/kubernetes/helm
+  cd ${PLAYCE_DIR}/data/repositories/kubernetes/helm
+  curl -LO https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz
+  HELM_TARFILE=helm-v3.7.2-linux-amd64.tar.gz
+fi
+
+tar zxfp ${PLAYCE_DIR}/data/repositories/kubernetes/helm/${HELM_TARFILE} linux-amd64/helm
+mv -f linux-amd64/helm /usr/local/bin/helm
+rm -rf linux-amd64
+helm completion bash > /etc/bash_completion.d/helm
+
+# helm chart install
+echo "# install helm chart"
+helm repo index ${PLAYCE_DATADIR}/repositories/helm-charts --url https://repositories.${PLAYCE_DOMAIN}/helm-charts
+helm repo add --force-update playcekube https://repositories.${PLAYCE_DOMAIN}/helm-charts
+
+# playcekube shell
+echo "# link playcekube"
+unlink /usr/local/bin/playcekube
+ln -s ${PLAYCE_DIR}/playcekube/deployer/scripts/playcekube.sh /usr/local/bin/playcekube
+
+# ssh-key-copy
+echo "# copy ssh-key"
+mkdir -p ~/.ssh
+touch ~/.ssh/authorized_keys
+sed -i "/$(cat /playcecloud/playcekube/deployer/kubespray/kubespray_ssh.pub | sed 's|/|\\/|g')/d" ~/.ssh/authorized_keys
+cat ${PLAYCE_DIR}/playcekube/deployer/kubespray/kubespray_ssh.pub >> ~/.ssh/authorized_keys
+
 echo ""
 echo "######## PlayceKube installed successfully ########"
 echo ""

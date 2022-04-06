@@ -1,13 +1,13 @@
 $ORIGIN .
 $TTL 0	; 0 seconds
 @			IN SOA	. . (
-				366        ; serial
+				368        ; serial
 				0          ; refresh (0 seconds)
 				0          ; retry (0 seconds)
 				0          ; expire (0 seconds)
 				0          ; minimum (0 seconds)
 				)
-			KEYDATA	20220407002326 20211206153259 19700101000000 257 3 8 (
+			KEYDATA	20220407055512 20211206153259 19700101000000 257 3 8 (
 				AwEAAaz/tAm8yTn4Mfeh5eyI96WSVexTBAvkMgJzkKTO
 				iW1vkIbzxeF3+/4RgWOq7HrxRixHlFlExOLAJr5emLvN
 				7SWXgnLh4+B5xQlNVz8Og8kvArMtNROxVQuCaSnIDdD5
@@ -17,5 +17,5 @@ $TTL 0	; 0 seconds
 				A4/ilBmSVIzuDWfdRUfhHdY6+cn8HFRm+2hM8AnXGXws
 				9555KrUB5qihylGa8subX2Nn6UwNR1AkUTV74bU=
 				) ; KSK; alg = RSASHA256; key id = 20326
-				; next refresh: Thu, 07 Apr 2022 00:23:26 GMT
+				; next refresh: Thu, 07 Apr 2022 05:55:12 GMT
 				; trusted since: Mon, 06 Dec 2021 15:32:59 GMT

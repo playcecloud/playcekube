@@ -151,6 +151,7 @@ systemctl enable chronyd --now
 systemctl restart chronyd
 
 # sync
+chronyc -a makestep
 chronyc sources
 
 # certs dir create
