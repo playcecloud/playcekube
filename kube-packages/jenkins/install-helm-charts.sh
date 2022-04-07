@@ -6,9 +6,9 @@ if [ -f ${BASEDIR}/../../playcekube.conf ]; then
 fi
 
 # clean
-helm uninstall jenkins -n jenkins
-rm -rf ${BASEDIR}/installed-values.yaml
-kubectl delete ns jenkins
+helm uninstall jenkins -n jenkins 2> /dev/null
+rm -rf ${BASEDIR}/installed-values.yaml 2> /dev/null
+kubectl delete ns jenkins 2> /dev/null
 
 # copy installed-values.yaml
 cp -rp ${BASEDIR}/values.yaml ${BASEDIR}/installed-values.yaml

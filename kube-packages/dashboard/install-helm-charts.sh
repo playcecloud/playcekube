@@ -6,9 +6,9 @@ if [ -f ${BASEDIR}/../../playcekube.conf ]; then
 fi
 
 # clean
-helm uninstall kubernetes-dashboard -n kubernetes-dashboard
-rm -rf ${BASEDIR}/installed-values.yaml
-kubectl delete ns kubernetes-dashboard
+helm uninstall kubernetes-dashboard -n kubernetes-dashboard 2> /dev/null
+rm -rf ${BASEDIR}/installed-values.yaml 2> /dev/null
+kubectl delete ns kubernetes-dashboard 2> /dev/null
 
 # copy installed-values.yaml
 cp -rp ${BASEDIR}/values.yaml ${BASEDIR}/installed-values.yaml

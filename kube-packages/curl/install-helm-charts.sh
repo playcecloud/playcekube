@@ -6,8 +6,8 @@ if [ -f ${BASEDIR}/../../playcekube.conf ]; then
 fi
 
 # clean
-helm uninstall curl -n default
-rm -rf ${BASEDIR}/installed-values.yaml
+helm uninstall curl -n default 2> /dev/null
+rm -rf ${BASEDIR}/installed-values.yaml 2> /dev/null
 
 # copy installed-values.yaml
 cp -rp ${BASEDIR}/values.yaml ${BASEDIR}/installed-values.yaml

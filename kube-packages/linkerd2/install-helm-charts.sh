@@ -6,9 +6,9 @@ if [ -f ${BASEDIR}/../../playcekube.conf ]; then
 fi
 
 # clean
-helm uninstall linkerd -n linkerd
-rm -rf ${BASEDIR}/installed-values.yaml
-kubectl delete ns linkerd
+helm uninstall linkerd -n linkerd 2> /dev/null
+rm -rf ${BASEDIR}/installed-values.yaml 2> /dev/null
+kubectl delete ns linkerd 2> /dev/null
 
 # copy installed-values.yaml
 cp -rp ${BASEDIR}/values.yaml ${BASEDIR}/installed-values.yaml

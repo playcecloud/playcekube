@@ -6,9 +6,9 @@ if [ -f ${BASEDIR}/../../playcekube.conf ]; then
 fi
 
 # clean
-helm uninstall velero -n velero
-rm -rf ${BASEDIR}/installed-values.yaml
-kubectl delete ns velero
+helm uninstall velero -n velero 2> /dev/null
+rm -rf ${BASEDIR}/installed-values.yaml 2> /dev/null
+kubectl delete ns velero 2> /dev/null
 
 # copy installed-values.yaml
 cp -rp ${BASEDIR}/values.yaml ${BASEDIR}/installed-values.yaml
@@ -52,7 +52,7 @@ rm -rf ${BASEDIR}/minio-velero.cfg
 # cli install
 tar zxf ${BASEDIR}/velero-v1.8.1-linux-amd64.tar.gz
 mv velero-v1.8.1-linux-amd64/velero /usr/local/bin/velero
-rm -rf ${BASEDIR}/velero-v1.8.1-linux-amd64
+rm -rf velero-v1.8.1-linux-amd64
 
 velero completion bash > /etc/bash_completion.d/velero
 
