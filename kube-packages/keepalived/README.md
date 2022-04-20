@@ -4,6 +4,12 @@ private helm repo 에 있는 chart 를 이용하여 설치
 kubernetes api 및 ingress vip 설정용 keepalived
 별도의 로드밸런서가 있다면 사용할 필요가 없다
 
+## 패키지 정보
+
+<!-- Addons Package List Start -->
+- keepalived 2.2.4
+<!-- Addons Package List End -->
+
 ## 공통 준비작업
 
 ```ShellSession

@@ -1,0 +1,8 @@
+docker.io/bitnami/kubeapps-apis:2.4.4-debian-10-r18
+docker.io/bitnami/kubeapps-apprepository-controller:2.4.4-scratch-r1
+docker.io/bitnami/kubeapps-dashboard:2.4.4-debian-10-r11
+docker.io/bitnami/kubeapps-kubeops:2.4.4-scratch-r1
+docker.io/bitnami/nginx:1.21.6-debian-10-r80
+docker.io/bitnami/postgresql:14.2.0-debian-10-r67
+docker.io/bitnami/kubeapps-asset-syncer:2.4.3-scratch-r2
+docker.io/bitnami/kubeapps-asset-syncer:2.4.4-scratch-r1

@@ -1,0 +1,3 @@
+docker.io/jaegertracing/all-in-one:1.19.2
+docker.io/otel/opentelemetry-collector:0.27.0
+cr.l5d.io/linkerd/jaeger-webhook:stable-2.11.1

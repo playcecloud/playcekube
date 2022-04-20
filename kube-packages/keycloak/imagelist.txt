@@ -1,0 +1,2 @@
+docker.io/bitnami/keycloak:16.1.1-debian-10-r82
+docker.io/bitnami/postgresql:14.2.0-debian-10-r67

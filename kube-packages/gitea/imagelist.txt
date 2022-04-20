@@ -1,0 +1,4 @@
+docker.io/library/busybox
+docker.io/"gitea/gitea:1.16.5"
+docker.io/bitnami/memcached:1.6.9-debian-10-r114
+docker.io/bitnami/postgresql:11.11.0-debian-10-r62

@@ -7,27 +7,25 @@ fi
 
 # function call
 . ${PLAYCE_DIR}/playcekube/deployer/scripts/playcekube_common.sh
-# check info
-RELEASE_NUM=$(getReleaseNumber)
 
 # busybox mode run
 chmod 755 ${PLAYCE_DIR}/playcekube/bin/busybox
 
 # os repository check & untar
-if ! checkRepositoryOSData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.OSRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
+if ! checkRepositoryOSData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.OSRepo.${PLAYCEKUBE_VERSION}.tar ]; then
   echo "# repository os data untar"
-  ${PLAYCE_DIR}/playcekube/bin/busybox tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.OSRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
+  ${PLAYCE_DIR}/playcekube/bin/busybox tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.OSRepo.${PLAYCEKUBE_VERSION}.tar -C ${PLAYCE_DIR}
 fi
 
 # kubernetes repository check & untar
-if ! checkRepositoryKubernetesData && ! checkRepositoryHelmChartsData && ! checkRepositoryCrioData && ! checkRepositoryDockerData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.K8SRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
+if ! checkRepositoryKubernetesData && ! checkRepositoryHelmChartsData && ! checkRepositoryCrioData && ! checkRepositoryDockerData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.K8SRepo.${PLAYCEKUBE_VERSION}.tar ]; then
   echo "# kubernetes repository data untar"
-  ${PLAYCE_DIR}/playcekube/bin/busybox tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.K8SRepo.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
+  ${PLAYCE_DIR}/playcekube/bin/busybox tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.K8SRepo.${PLAYCEKUBE_VERSION}.tar -C ${PLAYCE_DIR}
 fi
 # registry check & untar
-if ! checkRegistryData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.Registry.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar ]; then
+if ! checkRegistryData && [ -f ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.Registry.${PLAYCEKUBE_VERSION}.tar ]; then
   echo "# registry data untar"
-  ${PLAYCE_DIR}/playcekube/bin/busybox tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.Registry.${PLAYCEKUBE_VERSION}.${RELEASE_NUM}.tar -C ${PLAYCE_DIR}
+  ${PLAYCE_DIR}/playcekube/bin/busybox tar xfp ${PLAYCE_DIR}/downloadsrc/PlayceKubeData.Registry.${PLAYCEKUBE_VERSION}.tar -C ${PLAYCE_DIR}
 fi
 
 # data check or error
@@ -59,11 +57,11 @@ fi
 # binary copy
 echo "######## Kubernetes utils copy ########"
 echo "# copy kubectl"
-K8S_VERSION=${PLAYCEKUBE_VERSION/k/}
+K8S_VERSION=$(grep "^kubernetes-version" ${BASEDIR}/release.txt | sed "s/^kubernetes-version: \(.*\)/\1/")
 if [ ! -f "${PLAYCE_DIR}/data/repositories/kubernetes/${K8S_VERSION}/kubectl" ]; then
   mkdir -p ${PLAYCE_DIR}/data/repositories/kubernetes/${K8S_VERSION}
   cd ${PLAYCE_DIR}/data/repositories/kubernetes/${K8S_VERSION}
-  curl -LO https://dl.k8s.io/release/v1.23.0/bin/linux/amd64/kubectl
+  curl -LO https://dl.k8s.io/release/${K8S_VERSION}/bin/linux/amd64/kubectl
 fi
 
 cp --remove-destination ${PLAYCE_DIR}/data/repositories/kubernetes/${K8S_VERSION}/kubectl /usr/local/bin/kubectl

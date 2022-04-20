@@ -2,9 +2,6 @@
 
 BASEDIR=$(dirname $(readlink -f $0))
 
-
-echo ${BASEDIR}
-
 CADIR=${BASEDIR}/CA
 CERTSDIR=${BASEDIR}/certs
 

@@ -3,6 +3,31 @@
 빌드 배포에서 ci 부분을 담당하는 시스템  
 자체적으로 cd 부분까지 처리 할 수도 있고 argocd 등과 연동도 가능하다
 
+## 패키지 정보
+
+<!-- Addons Package List Start -->
+- tekton-pipeline v0.32.1
+- docker.io/alpine/git:v2.32.0
+- docker.io/library/busybox:1.35.0
+- docker.io/library/docker:dind
+- docker.io/library/docker:latest
+- docker.io/library/nginx:latest
+- docker.io/library/openjdk:18-ea-34-jdk
+- gcr.io/distroless/base:debug
+- gcr.io/distroless/base@sha256:cfdc553400d41b47fd231b028403469811fcdbc0e69d66ea8030c5a0b5fbac2b
+- gcr.io/google.com/cloudsdktool/cloud-sdk
+- gcr.io/google.com/cloudsdktool/cloud-sdk:302.0.0-slim
+- gcr.io/tekton-releases/github.com/tektoncd/dashboard/cmd/dashboard:v0.25.0
+- gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller:v0.32.1
+- gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/entrypoint:v0.32.1
+- gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.32.1
+- gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/imagedigestexporter:v0.32.1
+- gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/kubeconfigwriter:v0.32.1
+- gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/nop:v0.32.1
+- gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/pullrequest-init:v0.32.1
+- gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook:v0.32.1
+<!-- Addons Package List End -->
+
 ## 공통 준비작업
 
 ```ShellSession
@@ -40,15 +65,10 @@ helm install tekton playcekube/tekton -n tekton -f /playcecloud/playcekube/kube-
 
 ## 설치 확인
 
-사내망 에서 Windows 사용시 C:\Windows\System32\drivers\etc\hosts 파일에 다음과 같은 설정을 추가하면 브라우저로 접속이 가능(ip는 설정에 따라 다름. 본인은 중간에 haproxy로 deployer 서버를 바라보게 해서 설정)
-192.168.50.100 repositories.playcekube.local
-192.168.50.100 tekton.playcek8s.playcekube.local
-
-다음과 같은 url로 인증서를 Windows에서 신뢰된 루트 인증서로 등록을 하면 테스트가 더 수월합니다
-http://repositories.playcekube.local/certs/playcekube_rootca.crt
-
+dns 서버를 deploy 서버를 지정하거나 hosts 파일에 ingress 서버 주소를 바라보도록 설정하여  
+웹브라우저에서 확인  
+  
 이후 https://tekton.playcek8s.playcekube.local 로 접속하시면 확인 가능
-
 
 ### tekton cli command tool
 

@@ -2,6 +2,12 @@
 
 private helm repo 에 있는 chart 를 이용하여 설치
 
+## 패키지 정보
+
+<!-- Addons Package List Start -->
+- curl 7.80.0
+<!-- Addons Package List End -->
+
 ## 공통 준비작업
 
 ```ShellSession

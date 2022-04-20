@@ -1,0 +1,4 @@
+gcr.io/k8s-staging-sig-storage/nfsplugin:canary
+k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.4.0
+k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0
+k8s.gcr.io/sig-storage/livenessprobe:v2.5.0

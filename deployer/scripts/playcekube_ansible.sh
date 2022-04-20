@@ -20,6 +20,9 @@ done
 docker run -it --rm \
   --pull always \
   -v ${PLAYCE_DATADIR}/kubespray/inventory:/kubespray/inventory \
+  -v ${PLAYCE_DIR}/playcekube/deployer/certification/CA/playcekube_rootca.crt:/kubespray/playcekube_rootca.crt \
+  -v ${PLAYCE_DIR}/playcekube/deployer/kubespray/kubespray_ssh:/kubespray/kubespray_ssh \
+  -v ${PLAYCE_DIR}/playcekube/deployer/kubespray/kubespray_ssh.pub:/kubespray/kubespray_ssh.pub \
   -e PLAYCE_DIR=${PLAYCE_DIR} \
   -e PLAYCE_DOMAIN=${PLAYCE_DOMAIN} \
   -e DEPLOYER_SERVER=${PLAYCE_DEPLOYER} \

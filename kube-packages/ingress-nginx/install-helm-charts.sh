@@ -23,6 +23,9 @@ sed -i "s|digest: .*|digest: \"\"|g" ${BASEDIR}/installed-values.yaml
 # extra arguments
 grep -A 8 -n "arguments to pass to nginx-ingress-controller" ${BASEDIR}/installed-values.yaml | grep "extraArgs:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s/extraArgs: .*/extraArgs: { enable-ssl-passthrough: true }/" ${BASEDIR}/installed-values.yaml
 
+# config
+#sed -i "s|^  config:.*|  config:\n    http2_max_field_size: 64k|g" ${BASEDIR}/installed-values.yaml
+
 # nodeSelector
 grep -A 2 -n "nodeSelector:" ${BASEDIR}/installed-values.yaml | grep "kubernetes.io/os:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}s|kubernetes.io/os: .*|node-role.kubernetes.io/ingress: \"\"|g" ${BASEDIR}/installed-values.yaml
 sed -i "s|tolerations: \[\]|tolerations: \[operator: \"Exists\"\]|g" ${BASEDIR}/installed-values.yaml

@@ -2,6 +2,13 @@
 
 서비스 매쉬 addon
 
+## 패키지 정보
+
+<!-- Addons Package List Start -->
+- linkerd-multicluster stable-2.11.1
+- gcr.io/google_containers/pause
+<!-- Addons Package List End -->
+
 ## 공통 준비작업
 
 ```ShellSession

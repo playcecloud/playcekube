@@ -2,6 +2,16 @@
 
 private helm repo 에 있는 chart 를 이용하여 설치
 
+## 패키지 정보
+
+<!-- Addons Package List Start -->
+- csi-driver-nfs latest
+- gcr.io/k8s-staging-sig-storage/nfsplugin:canary
+- k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.4.0
+- k8s.gcr.io/sig-storage/csi-provisioner:v3.1.0
+- k8s.gcr.io/sig-storage/livenessprobe:v2.5.0
+<!-- Addons Package List End -->
+
 ## 공통 준비작업
 
 ```ShellSession

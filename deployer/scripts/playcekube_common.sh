@@ -5,15 +5,15 @@ if [ -f ${BASEDIR}/../../playcekube.conf ]; then
   . ${BASEDIR}/../../playcekube.conf
 fi
 
-function getReleaseNumber()
+function getReleaseVersion()
 {
-  local releasenum=0
+  local releasever=1.0
 
   if [[ -f "${PLAYCE_DIR}/playcekube/release.txt" ]]; then
-    releasenum=$(grep "^version:" ${PLAYCE_DIR}/playcekube/release.txt | awk -F "." '{ print $NF }')
+    releasever=$(grep "^version:" ${PLAYCE_DIR}/playcekube/release.txt | awk -F "-" '{ print $NF }')
   fi
 
-  echo ${releasenum};
+  echo ${releasever};
 }
 
 function getOSFamily()

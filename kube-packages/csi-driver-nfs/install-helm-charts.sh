@@ -19,6 +19,7 @@ CURRENT_CLUSTER=$(kubectl config current-context | sed "s/.*@\(.*\)/\1/")
 # installed-values.yaml private registry setting
 sed -i "s|repository: quay\.io/\(.*\)|repository: \1|g" ${BASEDIR}/installed-values.yaml
 sed -i "s|repository: k8s\.gcr\.io/\(.*\)|repository: \1|g" ${BASEDIR}/installed-values.yaml
+sed -i "s|repository: gcr\.io/\(.*\)|repository: \1|g" ${BASEDIR}/installed-values.yaml
 sed -i "s|repository: docker\.io/\(.*\)|repository: \1|g" ${BASEDIR}/installed-values.yaml
 sed -i "s|repository: mcr\.microsoft\.com/\(.*\)|repository: \1|g" ${BASEDIR}/installed-values.yaml
 sed -i "s|repository: \(.*\)|repository: registry.${PLAYCE_DOMAIN}:5000/\1|g" ${BASEDIR}/installed-values.yaml

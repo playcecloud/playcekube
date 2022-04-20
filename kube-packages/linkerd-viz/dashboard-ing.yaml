@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: linkerd.playcek8s.playcekube.local
+  - host: linkerd.playcek8s2.playcekube.local
     http:
       paths:
       - backend:

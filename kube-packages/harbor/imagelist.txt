@@ -1,0 +1,12 @@
+docker.io/bitnami/chartmuseum:0.14.0-debian-10-r74
+docker.io/bitnami/harbor-adapter-trivy:2.5.0-debian-10-r8
+docker.io/bitnami/harbor-core:2.5.0-debian-10-r8
+docker.io/bitnami/harbor-jobservice:2.4.2-debian-10-r31
+docker.io/bitnami/harbor-notary-server:2.5.0-debian-10-r8
+docker.io/bitnami/harbor-notary-signer:2.5.0-debian-10-r7
+docker.io/bitnami/harbor-portal:2.5.0-debian-10-r9
+docker.io/bitnami/harbor-registry:2.5.0-debian-10-r7
+docker.io/bitnami/harbor-registryctl:2.5.0-debian-10-r8
+docker.io/bitnami/nginx:1.21.6-debian-10-r80
+docker.io/bitnami/postgresql:11.15.0-debian-10-r68
+docker.io/bitnami/redis:6.2.6-debian-10-r179

@@ -111,9 +111,9 @@ Playce Kube를 설치하려면 먼저 호스트 머신에서 몇 가지 기본 �
    - Playce Kube Data 파일 다운로드
 
      ```shell
-     $ curl -LO http://download.playcecloud.io:13300/playcekube/PlayceKubeData.K8SRepo.kv1.22.5.1.tar
-     $ curl -LO http://download.playcecloud.io:13300/playcekube/PlayceKubeData.OSRepo.kv1.22.5.1.tar
-     $ curl -LO http://download.playcecloud.io:13300/playcekube/PlayceKubeData.Registry.kv1.22.5.1.tar
+     $ curl -LO http://download.playcecloud.io:13300/playcekube/PlayceKubeData.K8SRepo.v1.22-1.0.tar
+     $ curl -LO http://download.playcecloud.io:13300/playcekube/PlayceKubeData.OSRepo.v1.22-1.0.tar
+     $ curl -LO http://download.playcecloud.io:13300/playcekube/PlayceKubeData.Registry.v1.22-1.0.tar
      ```
 
      
@@ -135,7 +135,7 @@ Playce Kube를 설치하려면 먼저 호스트 머신에서 몇 가지 기본 �
    PLAYCE_DOMAIN=playcekube.local      # PlayceCloud domain 이름
    PLAYCE_DEPLOYER=10.10.10.1       	# PlayceCloud deploy node IP Address
    UPSTREAM_DNS=8.8.8.8          		# DNS
-   PLAYCEKUBE_VERSION=kv1.22.5         # PlayceKube Version
+   PLAYCEKUBE_VERSION=v1.22-1.0        # PlayceKube Version
    ```
 
 5. deploy 설치를 진행합니다.
@@ -242,8 +242,8 @@ Kubespray에 대한 자세한 설명은 [여기](https://kubespray.io/#/) 를 �
 
 ### Release 노트
 
-현재 PlayceKube 버전은 1.22.0 이며 해당 릴리즈는 Kubernetes 1.22 를 사용합니다.
-이 항목에는 PlayceKube 1.22.0 에 관한 새로운 기능, 변경 사항 및 알려진 문제가 포함되어 있습니다.
+현재 PlayceKube 버전은 v1.22-1.0 이며 해당 릴리즈는 Kubernetes v1.22.x 를 사용합니다.
+이 항목에는 PlayceKube v1.22-1.0 에 관한 새로운 기능, 변경 사항 및 알려진 문제가 포함되어 있습니다.
 
 
 이전 릴리즈 정보를 확인은 [이전 릴리즈 정보 ]() 에서 할 수 있습니다.
@@ -253,7 +253,7 @@ Kubespray에 대한 자세한 설명은 [여기](https://kubespray.io/#/) 를 �
 
 | 구분       | 제품버전 | 최종 릴리즈 |
 | ---------- | -------- | ----------- |
-| PlayceKube | 1.22     | 2022-03-17  |
+| PlayceKube | v1.22-1.0| 2022-04-20  |
 
 Copyright © 2022 Playce Cloud/Playce Kube ®. All rights reserved. Open Source Consulting, Inc has registered trademarks and uses trademarks. 
 

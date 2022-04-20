@@ -34,6 +34,16 @@ setenforce 0
 cp -rp ${PLAYCE_DIR}/playcekube/deployer/certification/CA/playcekube_rootca.crt /etc/pki/ca-trust/source/anchors/
 update-ca-trust extract
 
+# ssh keygen
+rm -rf ${PLAYCE_DIR}/playcekube/deployer/kubespray/kubespray_ssh*
+ssh-keygen -N "" -t rsa -f ${PLAYCE_DIR}/playcekube/deployer/kubespray/kubespray_ssh
+
+# ssh-key-copy to deployer (for add cluster shell run)
+mkdir -p ~/.ssh
+touch ~/.ssh/authorized_keys
+sed -i "/$(cat ${PLAYCE_DIR}/playcekube/deployer/kubespray/kubespray_ssh.pub | sed 's|/|\\/|g')/d" ~/.ssh/authorized_keys
+cat ${PLAYCE_DIR}/playcekube/deployer/kubespray/kubespray_ssh.pub >> ~/.ssh/authorized_keys
+
 if ! isOnline; then
 
 if [[ "${CHECKOSFAMILY}" == "centos" ]]; then
@@ -147,6 +157,8 @@ sed -i "s/^#allow .*/allow 0.0.0.0\/0/g" /etc/chrony.conf
 sed -i "s/^#local stratum .*/local stratum 8/g" /etc/chrony.conf
 
 # chrony start
+firewall-cmd --add-service=ntp --permanent
+firewall-cmd --reload
 systemctl enable chronyd --now
 systemctl restart chronyd
 
@@ -220,6 +232,9 @@ repository                      IN A ${PLAYCE_DEPLOYER}
 EOF
 
 # registry config
+firewall-cmd --add-port=5000/tcp --permanent
+firewall-cmd --reload
+
 mkdir -p ${PLAYCE_DIR}/playcekube/deployer/registry
 mkdir -p ${PLAYCE_DATADIR}/registry
 
@@ -252,6 +267,9 @@ EOF
 
 
 # repository config
+firewall-cmd --add-service=http --add-service=https --permanent
+firewall-cmd --reload
+
 mkdir -p ${PLAYCE_DIR}/playcekube/deployer/nginx/ssl
 mkdir -p ${PLAYCE_DATADIR}/repositories/{helm-charts,certs}
 

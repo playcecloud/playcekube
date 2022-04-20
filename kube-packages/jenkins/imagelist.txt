@@ -1,0 +1,4 @@
+docker.io/bats/bats:1.2.1
+docker.io/jenkins/inbound-agent:4.11.2-4
+docker.io/jenkins/jenkins:2.332.2-jdk11
+docker.io/kiwigrid/k8s-sidecar:1.15.0

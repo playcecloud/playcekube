@@ -9,4 +9,5 @@ kubernetes의 crd로 정의되어 있어 kubectl 커맨드로 설정 및 수행�
 
 - [maven example](maven-example)
 - [python example](python-example)
+- [simple example](simple-example)
 

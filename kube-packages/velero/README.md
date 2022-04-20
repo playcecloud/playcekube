@@ -2,6 +2,15 @@
 
 private helm repo 에 있는 chart 를 이용하여 설치
 
+## 패키지 정보
+
+<!-- Addons Package List Start -->
+- velero 1.8.1
+- docker.io/bitnami/kubectl:1.22
+- docker.io/velero/velero-plugin-for-aws:v1.3.0
+- docker.io/velero/velero:v1.8.1
+<!-- Addons Package List End -->
+
 ## 공통 준비작업
 
 ```ShellSession

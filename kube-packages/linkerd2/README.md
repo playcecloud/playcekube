@@ -2,6 +2,16 @@
 
 서비스 매쉬
 
+## 패키지 정보
+
+<!-- Addons Package List Start -->
+- linkerd2 stable-2.11.1
+- cr.l5d.io/linkerd/controller:stable-2.11.1
+- cr.l5d.io/linkerd/policy-controller:stable-2.11.1
+- cr.l5d.io/linkerd/proxy-init:v1.4.0
+- cr.l5d.io/linkerd/proxy:stable-2.11.1
+<!-- Addons Package List End -->
+
 ## 공통 준비작업
 
 ```ShellSession

@@ -2,6 +2,14 @@
 
 서비스 매쉬
 
+## 패키지 정보
+
+<!-- Addons Package List Start -->
+- ingress-nginx 1.1.3
+- k8s.gcr.io/ingress-nginx/controller:v1.1.3@sha256:31f47c1e202b39fadecf822a9b76370bd4baed199a005b3e7d4d1455f4fd3fe2
+- k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660
+<!-- Addons Package List End -->
+
 ## 공통 준비작업
 
 ```ShellSession

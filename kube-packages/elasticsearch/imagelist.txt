@@ -1,0 +1,4 @@
+docker.io/bitnami/elasticsearch-curator:5.8.4-debian-10-r253
+docker.io/fluent/fluent-bit:1.8.15
+docker.elastic.co/elasticsearch/elasticsearch:7.17.1
+docker.elastic.co/kibana/kibana:7.17.1

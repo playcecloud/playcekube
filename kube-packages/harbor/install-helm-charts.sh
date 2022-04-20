@@ -25,11 +25,11 @@ sed -i "s/imageRegistry: .*/imageRegistry: registry.${PLAYCE_DOMAIN}:5000/" ${BA
 sed -i "s/registry: .*/registry: registry.${PLAYCE_DOMAIN}:5000/g" ${BASEDIR}/installed-values.yaml
 
 # installed-values.yaml persistence volume false settting
-grep -A 3 -n "persistence:" ${BASEDIR}/installed-values.yaml | grep "enabled:" | sed "s/\([0-9]*\).*/\1/g" | sort -r -n | xargs -i sed -i "{}s/enabled:.*/enabled: false/g" ${BASEDIR}/installed-values.yaml
+#grep -A 3 -n "persistence:" ${BASEDIR}/installed-values.yaml | grep "enabled:" | sed "s/\([0-9]*\).*/\1/g" | sort -r -n | xargs -i sed -i "{}s/enabled:.*/enabled: false/g" ${BASEDIR}/installed-values.yaml
 ## postgresql persistence false
-grep -A 20 -n "^postgresql:" ${BASEDIR}/installed-values.yaml | grep "primary:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}a\    persistence: {enabled: false}" ${BASEDIR}/installed-values.yaml
+#grep -A 20 -n "^postgresql:" ${BASEDIR}/installed-values.yaml | grep "primary:" | sed "s/\([0-9]*\).*/\1/g" | xargs -i sed -i "{}a\    persistence: {enabled: false}" ${BASEDIR}/installed-values.yaml
 ## redis persistence false
-sed -i "/^redis:/a\  master: {persistence: {enabled: false}}" ${BASEDIR}/installed-values.yaml
+#sed -i "/^redis:/a\  master: {persistence: {enabled: false}}" ${BASEDIR}/installed-values.yaml
 
 # admin password
 sed -i "s/^adminPassword: .*/adminPassword: oscadmin/g" ${BASEDIR}/installed-values.yaml

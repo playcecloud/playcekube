@@ -2,6 +2,15 @@
 
 서비스 매쉬 addon
 
+## 패키지 정보
+
+<!-- Addons Package List Start -->
+- linkerd-jaeger stable-2.11.1
+- cr.l5d.io/linkerd/jaeger-webhook:stable-2.11.1
+- docker.io/jaegertracing/all-in-one:1.19.2
+- docker.io/otel/opentelemetry-collector:0.27.0
+<!-- Addons Package List End -->
+
 ## 공통 준비작업
 
 ```ShellSession

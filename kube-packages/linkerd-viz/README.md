@@ -2,6 +2,17 @@
 
 서비스 매쉬
 
+## 패키지 정보
+
+<!-- Addons Package List Start -->
+- linkerd-viz stable-2.11.1
+- cr.l5d.io/linkerd/grafana:stable-2.11.1
+- cr.l5d.io/linkerd/metrics-api:stable-2.11.1
+- cr.l5d.io/linkerd/tap:stable-2.11.1
+- cr.l5d.io/linkerd/web:stable-2.11.1
+- docker.io/prom/prometheus:v2.19.3
+<!-- Addons Package List End -->
+
 ## 공통 준비작업
 
 ```ShellSession

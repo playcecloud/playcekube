@@ -2,6 +2,16 @@
 
 private helm repo 에 있는 chart 를 이용하여 설치
 
+## 패키지 정보
+
+<!-- Addons Package List Start -->
+- jenkins 2.332.2
+- docker.io/bats/bats:1.2.1
+- docker.io/jenkins/inbound-agent:4.11.2-4
+- docker.io/jenkins/jenkins:2.332.2-jdk11
+- docker.io/kiwigrid/k8s-sidecar:1.15.0
+<!-- Addons Package List End -->
+
 ## 공통 준비작업
 
 ```ShellSession
