@@ -217,7 +217,7 @@ Kubespray에 대한 자세한 설명은 [여기](https://kubespray.io/#/) 를 �
    | PRIVATE_NTP            | 사설 NTP 서비스를 제공할 IP 정보                             |
    | MASTERS                | 마스터 노드의 SSH 접근을 위한 IP 정보                        |
    | WORKERS                | 워커 노드의 SSH 접근을 위한 IP 정보                          |
-   | INGRESSES              | INGRESSES 설치할 노드 정보                                   |
+   | INGRESSES              | 인그레스 설치할 노드 정보                                   |
 
    
 
