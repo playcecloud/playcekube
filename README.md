@@ -118,12 +118,12 @@ Playce Kube를 설치하려면 먼저 호스트 머신에서 몇 가지 기본 �
 
      
 
-4. **playce.conf**  파일을 정의 합니다.
+4. **playcekube.conf**  파일을 정의 합니다.
 
-   `playce.conf`파일은 deploy 설치시 하위 매개 변수를 기반으로 설치됩니다.
+   `playcekube.conf`파일은 deploy 설치시 하위 매개 변수를 기반으로 설치됩니다.
 
    ```shell
-   $ cd /playcecloud/playceKube
+   $ vi /playcecloud/playceKube/playcekube.conf
    ```
 
    **설정 파라미터** 
@@ -193,7 +193,7 @@ Kubespray에 대한 자세한 설명은 [여기](https://kubespray.io/#/) 를 �
    
    MASTERS=playcekube-master01:10.10.40.150
    WORKERS=playcekube-worker01:10.10.40.151,playcekube-worker02:10.10.40.152
-   INGRESSES=playcekube-master01
+   INGRESSES=playcekube-worker01:10.10.40.151,playcekube-worker02:10.10.40.152
    ```
    
 
@@ -217,7 +217,7 @@ Kubespray에 대한 자세한 설명은 [여기](https://kubespray.io/#/) 를 �
    | PRIVATE_NTP            | 사설 NTP 서비스를 제공할 IP 정보                             |
    | MASTERS                | 마스터 노드의 SSH 접근을 위한 IP 정보                        |
    | WORKERS                | 워커 노드의 SSH 접근을 위한 IP 정보                          |
-   | INGRESSES              | INGRESSES 설치할 노드 정보                                   |
+   | INGRESSES              | 인그레스 설치할 노드 정보                                   |
 
    
 
