@@ -193,7 +193,7 @@ Kubespray에 대한 자세한 설명은 [여기](https://kubespray.io/#/) 를 �
    
    MASTERS=playcekube-master01:10.10.40.150
    WORKERS=playcekube-worker01:10.10.40.151,playcekube-worker02:10.10.40.152
-   INGRESSES=playcekube-master01
+   INGRESSES=playcekube-worker01:10.10.40.151,playcekube-worker02:10.10.40.152
    ```
    
 
