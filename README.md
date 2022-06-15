@@ -118,12 +118,12 @@ Playce Kube를 설치하려면 먼저 호스트 머신에서 몇 가지 기본 �
 
      
 
-4. **playce.conf**  파일을 정의 합니다.
+4. **playcekube.conf**  파일을 정의 합니다.
 
-   `playce.conf`파일은 deploy 설치시 하위 매개 변수를 기반으로 설치됩니다.
+   `playcekube.conf`파일은 deploy 설치시 하위 매개 변수를 기반으로 설치됩니다.
 
    ```shell
-   $ cd /playcecloud/playceKube
+   $ vi /playcecloud/playceKube/playcekube.conf
    ```
 
    **설정 파라미터** 
