@@ -1,0 +1,162 @@
+# requirements
+# storage class 설정 필요
+# 임시로 일부 hostPath 를 이용하여 static pv 를 생성했으나 추가 pvc 요청이 있어 일단은 임시로 csi-nfs-provisioner를 사용함
+
+# git 정보
+# 기본 admin 은 이미 있고 argocd 계정은 생성을 해야함
+# 그리고 각자 project 를 sample 용으로 simple 로 만들어 준다
+
+# admin : http://gitea.playcek8s.playcekube.local/admin
+# admin/vmffpdltm
+# argocd : http://gitea.playcek8s.playcekube.local/argocd
+# argocd/argocd
+
+# image registry 정보
+# harbor 의 경우 project를 생성해 줘야 한다 admin project
+# private registry (deploy)
+# https://registry.playcekube.local:5000
+# harbor in k8s
+# https://harbor.playcek8s.playcekube.local
+# admin/vmffpdltm
+
+
+mkdir -p src/{argocd,html-src}
+
+# html test source 생성
+cd src/html-src
+# simple README.md
+cat << EOF > README.md
+# simple example
+EOF
+# simple index
+cat << EOF > index.html
+<h1>first index page</h1>
+<h1>version 0.1</h1>
+EOF
+# dockerfile
+cat << EOF > Dockerfile
+FROM registry.playcekube.local:5000/library/nginx:latest
+
+LABEL version=0.1
+
+COPY *.html /usr/share/nginx/html/
+EOF
+
+git init
+git add --all
+git commit -m "init git"
+git remote add origin http://gitea.playcek8s.playcekube.local/admin/simple.git
+git push -u origin master
+
+
+cd ../..
+
+# argocd 용 기본 resource 생성
+cd src/argocd
+
+# deployment.yaml create
+cat << EOF > deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple
+  namespace: cicd-example
+  labels:
+    app.kubernetes.io/name: simple
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: simple
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: simple
+    spec:
+      containers:
+      - name: simple-http
+        image: harbor.playcek8s.playcekube.local/admin/simple:0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 0
+EOF
+
+# ingress.yaml create
+cat << EOF > ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    app.kubernetes.io/name: simple
+  name: simple
+  namespace: cicd-example
+spec:
+  rules:
+  - host: simple.playcek8s.playcekube.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: simple
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+EOF
+
+# service.yaml create
+cat << EOF > service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: simple
+  name: simple
+  namespace: cicd-example
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app.kubernetes.io/name: simple
+  type: ClusterIP
+EOF
+
+git init
+git add --all
+git commit -m "init git"
+git remote add origin http://gitea.playcek8s.playcekube.local/argocd/simple.git
+git push -u origin master
+
+# git 을 만든 후 argocd 에서 application 생성
+
+
+cd ../..
+
+# namespace 및 기본 resource 와 task, pipeline 생성
+kc apply -f 00-ns.yaml
+kc apply -f 01-pv_pvc.yaml
+kc apply -f 02-resources.yaml
+kc apply -f 10-download-git-task.yaml
+kc apply -f 30-image-build-push-task.yaml
+kc apply -f 40-argo-git-push-task.yaml
+kc apply -f 80-simple-pipline-example.yaml
+
+# pipeline 에 resource 정보를 넣고 실행
+kc delete -f 81-simple-pipline-example-run.yaml
+kc apply -f 81-simple-pipline-example-run.yaml
+
+# check
+curl http://simple.playcek8s.playcekube.local/
+
+
+# 이후 html source 를 변경 하여pipeline run 부분을 다시 실행
+# 다시 url 체크
+# 이 과정에서 argocd 설정 등에 따라 sync 를 다시 해줘야 할 수 있음
+# tekton trigger 를 사용하여 git webhook 을 사용하는 예제는 추가 설치 및 설정이 필요하여 일시 제외
+

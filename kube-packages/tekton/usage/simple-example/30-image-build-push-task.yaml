@@ -1,0 +1,93 @@
+apiVersion: tekton.dev/v1beta1
+kind: ClusterTask
+metadata:
+  name: image-build-push
+spec:
+  workspaces:
+    - name: workspace
+  resources:
+    outputs:
+      - name: result-image
+        type: image
+  params:
+    - name: appname
+      type: string
+      description: application name
+      default: default
+    - name: base-image
+      type: string
+      description: base image
+      default: ubuntu:latest
+    - name: private-registry
+      type: string
+      description: private registry url
+      default: registry.playcekube.local:5000
+
+  sidecars:
+    - image: $(params.private-registry)/library/docker:dind
+      name: server
+      securityContext:
+        privileged: true
+      env:
+      - name: DOCKER_TLS_CERTDIR
+        value: /certs
+      volumeMounts:
+      - mountPath: /certs/client
+        name: dind-certs
+      - mountPath: /etc/ssl/certs
+        name: ca-certs
+      readinessProbe:
+        periodSeconds: 1
+        exec:
+          command: ['ls', '/certs/client/ca.pem']
+  steps:
+    - image: $(params.private-registry)/library/docker:latest
+      name: build
+      env:
+      - name: DOCKER_HOST
+        value: tcp://localhost:2376
+      - name: DOCKER_TLS_VERIFY
+        value: '1'
+      - name: DOCKER_CERT_PATH
+        value: /certs/client
+      script: |
+        #!/usr/bin/env sh
+        echo "##### image build start"
+        ls -l /
+        ls -l /workspace
+        ls -l /workspace/workspace
+        ls -l /workspace/output
+        ls -l $(workspaces.workspace.path)
+        ls -l $(workspaces.workspace.path)/source-git
+        ls -l $(workspaces.workspace.path)/$(params.appname)/src
+        cd $(workspaces.workspace.path)/$(params.appname)/src
+        IMAGE_TAG=$(grep "LABEL version" Dockerfile | sed "s/.*LABEL version=\(.*\)/\1/g")
+        docker build -t $(resources.outputs.result-image.url):${IMAGE_TAG} .
+      volumeMounts:
+      - mountPath: /certs/client
+        name: dind-certs
+    - image: $(params.private-registry)/library/docker:latest
+      name: push
+      env:
+      - name: DOCKER_HOST
+        value: tcp://localhost:2376
+      - name: DOCKER_TLS_VERIFY
+        value: '1'
+      - name: DOCKER_CERT_PATH
+        value: /certs/client
+      script: |
+        #!/usr/bin/env sh
+        echo "##### image push start"
+        cd $(workspaces.workspace.path)/$(params.appname)/src
+        IMAGE_TAG=$(grep "LABEL version" Dockerfile | sed "s/.*LABEL version=\(.*\)/\1/g")
+        docker push $(resources.outputs.result-image.url):${IMAGE_TAG}
+      volumeMounts:
+      - mountPath: /certs/client
+        name: dind-certs
+  volumes:
+    - name: dind-certs
+      emptyDir: {}
+    - name: ca-certs
+      secret:
+        secretName: playcekube-rootca
+

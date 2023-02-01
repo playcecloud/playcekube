@@ -1,0 +1,33 @@
+---
+- name: post reset
+  user: root
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: remove docker-ce docker-ce-cli containerd
+      package:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - docker-ce
+        - docker-ce-cli
+        - containerd
+      ignore_errors: yes
+
+    - name: delete container resources
+      shell: "rm -rf /var/lib/containerd /var/lib/docker /var/lib/cni /etc/cni /var/run/calico /var/run/containerd /var/run/docker /opt/cni /opt/containerd"
+      ignore_errors: yes
+
+    - name: restart NetworkManager
+      systemd:
+        name: NetworkManager.service
+        state: restarted
+      ignore_errors: yes
+
+    - name: restart systemd-networkd.service
+      systemd:
+        name: systemd-networkd.service
+        state: restarted
+      ignore_errors: yes
+      when: ansible_facts['os_family'] == "Debian"
+

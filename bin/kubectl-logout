@@ -1,0 +1,90 @@
+#!/bin/bash
+BASEDIR=$(dirname $(readlink -f $0))
+
+# PLAYCE CONF
+PLAYCE_DIR=/playcecloud
+if [ -f ${PLAYCE_DIR}/playcecloud.conf ]; then
+  . ${PLAYCE_DIR}/playcecloud.conf
+fi
+
+# args parsing
+while [[ $# -gt 0 ]] && [[ "$1" == "-"* ]];
+do
+  OPT="$1";
+  shift;
+
+  case "${OPT}" in
+    "--" ) ;;
+    "-" )
+      break 2;
+      ;;
+# username
+    "--username" ) ;;
+    "-u" )
+      REALM_KUBERNETES_USER="$1";
+      shift;
+      ;;
+    "--username="* )
+      REALM_KUBERNETES_USER="${OPT#*=}";
+      ;;
+# password
+    "--password" ) ;;
+    "-p" )
+      REALM_KUBERNETES_USER_PASSWORD="$1";
+      shift;
+      ;;
+    "--password="* )
+      REALM_KUBERNETES_USER_PASSWORD="${OPT#*=}";
+      ;;
+# client id
+    "--client-id" )
+      REALM_KUBERNETES_CLIENT_ID="$1";
+      shift;
+      ;;
+    "--client-id="* )
+      REALM_KUBERNETES_CLIENT_ID="${OPT#*=}";
+      ;;
+# client secret
+    "--client-secret" )
+      REALM_KUBERNETES_CLIENT_SECRET="$1";
+      shift;
+      ;;
+    "--client-secret="* )
+      REALM_KUBERNETES_CLIENT_SECRET="${OPT#*=}";
+      ;;
+    *)
+      echo >&2 "[ERROR] Invalid option: $@";
+      exit;
+      ;;
+ esac
+done
+
+# current cluster name
+CURRENT_CLUSTER=$(kubectl config current-context | sed "s/.*@\(.*\)/\1/")
+
+# keycloak config
+mkdir -p ${HOME}/.kube
+touch ${HOME}/.kube/keycloak
+
+# keycloak clientid, secret
+REALM_KUBERNETES_CLIENT_ID=$(grep "^${CURRENT_CLUSTER}" ${HOME}/.kube/keycloak | awk -F: '{ print $2 }')
+REALM_KUBERNETES_CLIENT_ID=${REALM_KUBERNETES_CLIENT_ID:=kubernetes}
+REALM_KUBERNETES_CLIENT_SECRET=$(grep "^${CURRENT_CLUSTER}" ${HOME}/.kube/keycloak | awk -F: '{ print $3 }')
+
+sed -i "/^${CURRENT_CLUSTER}/d" ${HOME}/.kube/keycloak
+echo "${CURRENT_CLUSTER}:${REALM_KUBERNETES_CLIENT_ID}:${REALM_KUBERNETES_CLIENT_SECRET}" >> ${HOME}/.kube/keycloak
+
+# input username
+if [[ ! "${REALM_KUBERNETES_USER}" ]]; then
+  REALM_KUBERNETES_USER=$(kubectl config get-contexts | grep "^*" | awk '{ print $4 }')
+  REALM_KUBERNETES_USER=${REALM_KUBERNETES_USER#*-}
+fi 
+
+if [[ "${REALM_KUBERNETES_USER}" != "admin" ]]; then
+  kubectl config delete-context ${REALM_KUBERNETES_USER}@${CURRENT_CLUSTER} 2> /dev/null
+  kubectl config delete-user ${CURRENT_CLUSTER}-${REALM_KUBERNETES_USER} 2> /dev/null
+  kubectl config use-context admin@${CURRENT_CLUSTER}
+
+  echo "[INFO] User ${REALM_KUBERNETES_USER} logout..."
+fi
+

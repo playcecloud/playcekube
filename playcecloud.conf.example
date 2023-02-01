@@ -1,0 +1,11 @@
+# PlayceCloud config env
+PLAYCE_DIR=/playcecloud
+PLAYCE_CONFDIR=${PLAYCE_DIR}/conf
+PLAYCE_DATADIR=${PLAYCE_DIR}/data
+PLAYCE_DOMAIN=playce.cloud
+PLAYCE_DEPLOY=$(ip -4 -o a | grep -Ev "\slo\s" | head -n 1 | awk '{ print $4 }' | sed 's/\(.*\)\/.*/\1/')
+UPSTREAM_DNS=8.8.8.8
+PLAYCEOPENSTACK_VERSION=v1.0.0
+PLAYCEKUBE_VERSION=v2.0.0
+RANCHER_SECRET=
+

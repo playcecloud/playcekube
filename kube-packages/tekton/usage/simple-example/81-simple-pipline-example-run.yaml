@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: simple-pipeline-example-run
+  namespace: cicd-example
+spec:
+  serviceAccountName: simple-pipe-bot
+  pipelineRef:
+    name: simple-pipeline-example
+  workspaces:
+    - name: workspace
+      persistentVolumeClaim:
+        claimName: workspace
+  resources:
+    - name: source-git
+      resourceRef:
+        name: simple-git
+    - name: argo-git
+      resourceRef:
+        name: argo-simple-git
+    - name: simple-image
+      resourceRef:
+        name: simple-image
+  params:
+    - name: base-image
+      value: harbor.playcek8s2.playcekube.local/library/nginx:latest
+    - name: private-registry
+      value: registry.playcekube.local:5000
+

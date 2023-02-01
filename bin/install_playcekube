@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# sh config
+BASEDIR=$(dirname $(readlink -f $0))
+
+# find rootpath
+ROOT_PATH=${BASEDIR%/playcekube/bin}
+
+# PLAYCE CONF
+PLAYCE_DIR=${ROOT_PATH}
+if [ ! -f ${PLAYCE_DIR}/playcecloud.conf ]; then
+  cp -rp ${PLAYCE_DIR}/playcekube/playcecloud.conf.example ${PLAYCE_DIR}/playcecloud.conf
+  sed -i "s|^PLAYCE_DIR=.*|PLAYCE_DIR=${PLAYCE_DIR}|g" ${PLAYCE_DIR}/playcecloud.conf
+fi
+
+if [ -f ${PLAYCE_DIR}/playcecloud.conf ]; then
+  . ${PLAYCE_DIR}/playcecloud.conf
+fi
+
+# change base dir
+sed -i "s|^PLAYCE_DIR=.*|PLAYCE_DIR=${PLAYCE_DIR}|g" ${PLAYCE_DIR}/playcekube/bin/*.sh
+sed -i "s|^PLAYCE_DIR=.*|PLAYCE_DIR=${PLAYCE_DIR}|g" ${PLAYCE_DIR}/playcekube/keycloak/*.sh
+sed -i "s|^PLAYCE_DIR=.*|PLAYCE_DIR=${PLAYCE_DIR}|g" ${PLAYCE_DIR}/playcekube/rancher/*.sh
+sed -i "s|^PLAYCE_DIR=.*|PLAYCE_DIR=${PLAYCE_DIR}|g" ${PLAYCE_DIR}/playcekube/certificates/*.sh
+sed -i "s|^PLAYCE_DIR=.*|PLAYCE_DIR=${PLAYCE_DIR}|g" ${PLAYCE_DIR}/playcekube/certificates/*.conf
+sed -i "s|^PLAYCE_DIR=.*|PLAYCE_DIR=${PLAYCE_DIR}|g" ${PLAYCE_DIR}/playcekube/kube-packages/*/*.sh
+
+# untar
+${PLAYCE_DIR}/playcekube/bin/playcekube_repo_untar.sh
+
+# service config
+echo "[INFO] ######## PlayceKube service config ########"
+${PLAYCE_DIR}/playcekube/bin/playcekube_service_config.sh
+echo "[INFO] ######## PlayceKube service config complete ########"
+
+# service start
+echo "[INFO] ######## PlayceKube service start ########"
+${PLAYCE_DIR}/playcekube/bin/playcekube_service_start.sh
+echo "[INFO] ######## PlayceKube service started ########"
+
+# binary install
+echo "[INFO] ######## PlayceKube binary install start ########"
+${PLAYCE_DIR}/playcekube/bin/playcekube_binary_install.sh
+echo "[INFO] ######## PlayceKube binary install end ########"
+
+echo ""
+echo "[INFO] ######## PlayceKube installed successfully ########"
+echo ""
+

@@ -1,0 +1,29 @@
+
+    opendistro_security.ssl.transport.pemcert_filepath: /usr/share/elasticsearch/config/certs/elasticsearch.crt
+    opendistro_security.ssl.transport.pemkey_filepath: /usr/share/elasticsearch/config/certs/elasticsearch.key
+    opendistro_security.ssl.transport.pemtrustedcas_filepath: /usr/share/elasticsearch/config/certs/root-ca.crt
+    opendistro_security.ssl.transport.enforce_hostname_verification: false
+    opendistro_security.ssl.http.enabled: true
+    opendistro_security.ssl.http.pemcert_filepath: /usr/share/elasticsearch/config/certs/elasticsearch.crt
+    opendistro_security.ssl.http.pemkey_filepath: /usr/share/elasticsearch/config/certs/elasticsearch.key
+    opendistro_security.ssl.http.pemtrustedcas_filepath: /usr/share/elasticsearch/config/certs/root-ca.crt
+    opendistro_security.allow_unsafe_democertificates: false
+    opendistro_security.allow_default_init_securityindex: true
+
+    opendistro_security.enable_snapshot_restore_privilege: true
+    opendistro_security.check_snapshot_restore_write_privileges: true
+
+    opendistro_security.restapi.roles_enabled:
+      - all_access
+      - security_rest_api_access
+
+    opendistro_security.nodes_dn:
+      - CN=opendistro-*
+      - CN=elasticsearch.*
+
+    opendistro_security.authcz.admin_dn:
+      - CN=admin
+
+    opendistro_security.audit.type: internal_elasticsearch
+
+

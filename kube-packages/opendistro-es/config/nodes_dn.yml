@@ -1,0 +1,9 @@
+_meta:
+  type: "nodesdn"
+  config_version: 2
+
+elasticsearch:
+  nodes_dn:
+    - CN=opendistro-*
+    - CN=elasticsearch.*
+

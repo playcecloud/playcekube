@@ -1,0 +1,12 @@
+---
+- name: copy ssh key
+  user: root
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: copy ssh key
+      authorized_key:
+        user: "{{ lookup('env', 'ANSIBLE_USER') }}"
+        key: "{{ lookup('file','/kubespray/kubespray_ssh.pub') }}"
+      ignore_errors: yes
+

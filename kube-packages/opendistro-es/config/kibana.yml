@@ -1,0 +1,38 @@
+
+    uiSettings.overrides.defaultRoute: /app/discover
+    server.defaultRoute: /app/discover
+
+    server.name: kibana
+    server.host: "0"
+    elasticsearch.hosts: https://opendistro-es-client-service:9200
+    elasticsearch.ssl.verificationMode: certificate
+    elasticsearch.ssl.certificateAuthorities: /usr/share/elasticsearch/config/certs/root-ca.crt
+    elasticsearch.username: kibanaserver
+    elasticsearch.password: vmffpdltmkibana
+    elasticsearch.requestHeadersWhitelist: ["Authorization", "security_tenant", "securitytenant"]
+
+    server.ssl.enabled: true
+    server.ssl.key: /usr/share/elasticsearch/config/certs/kibana.key
+    server.ssl.certificate: /usr/share/elasticsearch/config/certs/kibana.crt
+    server.ssl.certificateAuthorities: /usr/share/elasticsearch/config/certs/root-ca.crt
+
+    opendistro_security.multitenancy.enabled: false
+    opendistro_security.multitenancy.tenants.preferred: ["Private", "Global"]
+    opendistro_security.readonly_mode.roles: ["kibana_read_only"]
+
+    opendistro_security.basicauth.enabled: true
+    opendistro_security.allow_client_certificates: true
+    opendistro_security.cookie.secure: true
+#    opendistro_security.auth.type: "openid"
+
+    opendistro_security.openid.root_ca: /usr/share/elasticsearch/config/certs/root-ca.crt
+    opendistro_security.openid.connect_url: https://keycloak.k8s.test.playce.cloud/auth/realms/k8s/.well-known/openid-configuration
+    opendistro_security.openid.client_id: "kubernetes"
+    opendistro_security.openid.client_secret: "TbSc793dfYBb1kihWhNhXVUfjtBQssXx"
+    opendistro_security.openid.base_redirect_url: https://kibana.k8s.test.playce.cloud
+    opendistro_security.openid.scope: openid
+
+    newsfeed.enabled: false
+    telemetry.optIn: false
+    telemetry.enabled: false
+

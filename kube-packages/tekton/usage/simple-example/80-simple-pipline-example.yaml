@@ -1,0 +1,82 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: simple-pipeline-example
+  namespace: cicd-example
+spec:
+  workspaces:
+    - name: workspace
+  resources:
+    - name: source-git
+      type: git
+    - name: argo-git
+      type: git
+    - name: simple-image
+      type: image
+  params:
+    - name: base-image
+      type: string
+      description: base image
+      default: registry.playcekube.local:5000/library/nginx:latest
+    - name: private-registry
+      type: string
+      description: private registry
+      default: registry.playcekube.local:5000
+
+  tasks:
+    - name: download-git
+      taskRef:
+        name: download-git
+        kind: ClusterTask
+      workspaces:
+        - name: workspace
+          workspace: workspace
+      resources:
+        inputs:
+          - name: source-git
+            resource: source-git
+      params:
+      - name: appname
+        value: simple-pipeline-example
+
+    - name: image-build-push
+      taskRef:
+        name: image-build-push
+        kind: ClusterTask
+      runAfter:
+        - download-git
+      workspaces:
+        - name: workspace
+          workspace: workspace
+      resources:
+        outputs:
+          - name: result-image
+            resource: simple-image
+      params:
+      - name: appname
+        value: simple-pipeline-example
+      - name: base-image
+        value: $(params.base-image)
+      - name: private-registry
+        value: $(params.private-registry)
+
+    - name: argo-git-push
+      taskRef:
+        name: argo-git-push
+        kind: ClusterTask
+      runAfter:
+        - image-build-push
+      workspaces:
+        - name: workspace
+          workspace: workspace
+      resources:
+        inputs:
+          - name: result-image
+            resource: simple-image
+          - name: argo-git
+            resource: argo-git
+      params:
+      - name: appname
+        value: simple-pipeline-example
+
+

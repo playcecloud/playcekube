@@ -1,0 +1,58 @@
+---
+_meta:
+  type: "config"
+  config_version: 2
+
+config:
+  dynamic:
+    do_not_fail_on_forbidden: true
+    kibana:
+      multitenancy_enabled: false
+      server_username: kibanaserver
+      index: '.kibana'
+
+    http:
+      anonymous_auth_enabled: false
+      xff:
+        enabled: false
+    authc:
+      basic_internal_auth_domain:
+        description: "Authenticate via HTTP Basic against internal users database"
+        http_enabled: true
+        transport_enabled: true
+        order: 0
+        http_authenticator:
+          type: basic
+          challenge: false
+        authentication_backend:
+          type: intern
+      openid_auth_domain:
+        description: "Authenticate via Keycloak"
+        http_enabled: true
+        transport_enabled: true
+        order: 1
+        http_authenticator:
+          type: openid
+          challenge: false
+          config:
+            subject_key: preferred_username
+            roles_key: groups
+            openid_connect_url: https://keycloak.k8s.test.playce.cloud/auth/realms/k8s/.well-known/openid-configuration
+            openid_connect_idp.pemtrustedcas_filepath: /usr/share/elasticsearch/config/certs/root-ca.crt
+            openid_connect_idp.enable_ssl: true
+        authentication_backend:
+          type: noop
+#      proxy_auth_domain:
+#        description: "Authenticate via proxy"
+#        http_enabled: false
+#        transport_enabled: false
+#        order: 2
+#        http_authenticator:
+#          type: proxy
+#          challenge: false
+#          config:
+#            user_header: "x-proxy-user"
+#            roles_header: "x-proxy-roles"
+#        authentication_backend:
+#          type: noop
+

@@ -1,0 +1,93 @@
+{
+    "realm": "<<USING_CLUSTER>>",
+    "enabled": true,
+    "displayName": "Playce Kube - <<USING_CLUSTER>> -",
+    "displayNameHtml": "<div class=\"kc-logo-text\"><span>Playce Kube - <<USING_CLUSTER>> -</span></div>",
+    "clients": [
+        {
+            "clientId": "kubernetes",
+            "enabled": true,
+            "baseUrl": "https://keycloak.<<USING_CLUSTER>>.<<PLAYCE_DOMAIN>>/auth/realms/<<USING_CLUSTER>>/account/",
+            "clientAuthenticatorType": "client-secret",
+            "redirectUris": [ "https://*" ],
+            "webOrigins": [ "*" ],
+            "directAccessGrantsEnabled": true,
+            "serviceAccountsEnabled": true,
+            "publicClient": false,
+            "protocol": "openid-connect",
+            "protocolMappers": [
+                {
+                    "name": "groups",
+                    "protocol": "openid-connect",
+                    "protocolMapper": "oidc-group-membership-mapper",
+                    "consentRequired": false,
+                    "config": {
+                        "full.path": "false",
+                        "id.token.claim": "true",
+                        "access.token.claim": "true",
+                        "claim.name": "groups",
+                        "userinfo.token.claim": "true"
+                    }
+                },
+                {
+                    "name": "audience",
+                    "protocol": "openid-connect",
+                    "protocolMapper": "oidc-audience-mapper",
+                    "consentRequired": false,
+                    "config": {
+                        "included.client.audience": "kubernetes",
+                        "id.token.claim": "false",
+                        "access.token.claim": "true",
+                        "included.custom.audience": "kubernetes"
+                    }
+                },
+                {
+                  "name": "policy",
+                  "protocol": "openid-connect",
+                  "protocolMapper": "oidc-usermodel-attribute-mapper",
+                  "consentRequired": false,
+                  "config": {
+                    "userinfo.token.claim": "true",
+                    "user.attribute": "policy",
+                    "id.token.claim": "true",
+                    "access.token.claim": "true",
+                    "claim.name": "policy",
+                    "jsonType.label": "String"
+                  }
+                }
+
+            ],
+            "frontchannelLogout": true,
+            "attributes": {
+                "use.refresh.tokens": "true",
+                "frontchannel.logout.url": "https://oauth2-proxy.<<USING_CLUSTER>>.<<PLAYCE_DOMAIN>>/oauth2/sign_out"
+            }
+        }
+    ],
+    "users": [
+        {
+            "username": "<<ADMIN_USER>>",
+            "email": "<<ADMIN_USER>>@<<USING_CLUSTER>>.<<PLAYCE_DOMAIN>>",
+            "enabled": true,
+            "credentials": [
+                {
+                    "type": "password",
+                    "value": "<<ADMIN_PASSWORD>>"
+                }
+            ],
+            "attributes":
+            {
+                "policy": "consoleAdmin"
+            }
+         }
+    ],
+    "groups": [
+        {
+            "name": "admin"
+        },
+        {
+            "name": "developers"
+        }
+    ]
+}
+

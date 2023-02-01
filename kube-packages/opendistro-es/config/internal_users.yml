@@ -1,0 +1,53 @@
+---
+_meta:
+  type: "internalusers"
+  config_version: 2
+
+playce-admin:
+  # /usr/share/elasticsearch/plugins/opendistro_security/tools/hash.sh
+  # vmffpdltmkibana
+  hash: "$2y$12$wwG7hXEr.byYPUB/f6pzCeZ5TdkEPNlwkVU5xA.TIjuy9yIH8eqTa"
+  reserved: true
+  backend_roles:
+  - "admin"
+  description: "Default admin user"
+
+kibanaserver:
+  # /usr/share/elasticsearch/plugins/opendistro_security/tools/hash.sh
+  # vmffpdltmkibana
+  hash: "$2y$12$1l97YAZvVSi3kjjJleGZB.SDNsEwp/2N0E.mVF5htZ7eHVWP9Dmkm"
+  reserved: true
+  description: "Default kibanaserver user"
+
+logstash:
+  # /usr/share/elasticsearch/plugins/opendistro_security/tools/hash.sh
+  # vmffpdltmlogstash
+  hash: "$2y$12$JeCMFuDhz5YqO2DZsU7iPOiollFnY13yML0skcOeIgD3MlGVN2sbS"
+  reserved: false
+  backend_roles:
+  - "logstash"
+  description: "Default logstash user"
+
+readall:
+  hash: "$2a$12$ae4ycwzwvLtZxwZ82RmiEunBbIPiAmGZduBAjKN0TXdwQFtCwARz2"
+  reserved: false
+  backend_roles:
+  - "readall"
+  description: "Demo readall user"
+
+snapshotrestore:
+  hash: "$2y$12$DpwmetHKwgYnorbgdvORCenv4NAK8cPUg8AI6pxLCuWf/ALc0.v7W"
+  reserved: false
+  backend_roles:
+  - "snapshotrestore"
+  description: "Demo snapshotrestore user"
+
+curator:
+  # /usr/share/elasticsearch/plugins/opendistro_security/tools/hash.sh
+  # vmffpdltmcurator
+  hash: "$2y$12$yWW7xX3HSB2QqDydE/CnteC1yGQ2cqRAR9jRMrebB.iiuBWIsmhmq"
+  reserved: true
+  backend_roles:
+  - "curator"
+  description: "Default curator user"
+

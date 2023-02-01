@@ -1,0 +1,43 @@
+# tekton-pipeline values.yaml
+image:
+  registry: registry.local.cloud:5000
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+
+# If is enable tekton dashboard is install
+tekton-dashboard:
+  enabled: true
+
+  image:
+    registry: registry.local.cloud:5000
+
+  ingress:
+    enabled: true
+   
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /
+    hosts:
+      - host: tekton.k8s.test.playce.cloud
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: wild-tls
+        hosts:
+          - tekton.k8s.test.playce.cloud
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+
+# If is enable tekton triggers is install
+tekton-triggers:
+  enabled: true
+
+  image:
+    registry: registry.local.cloud:5000
+
+

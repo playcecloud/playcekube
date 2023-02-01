@@ -1,0 +1,123 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: simple-git
+  namespace: cicd-example
+spec:
+  type: git
+  params:
+    - name: url
+      value: https://gitea.playcek8s.playcekube.local/admin/simple.git
+    - name: revision
+      value: master
+    - name: sslVerify
+      value: "false"
+
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: argo-simple-git
+  namespace: cicd-example
+spec:
+  type: git
+  params:
+    - name: url
+      value: https://gitea.playcek8s.playcekube.local/argocd/simple.git
+    - name: revision
+      value: master
+    - name: sslVerify
+      value: "false"
+
+---
+apiVersion: v1
+kind: Secret
+type: Opaque   
+metadata:
+  name: playcekube-rootca
+  namespace: cicd-example
+stringData:
+  ca-certificates.crt: |
+    -----BEGIN CERTIFICATE-----
+    MIIDHDCCAgSgAwIBAgIUPTN9lG91wzmdlWMk8QLE7v/SVXkwDQYJKoZIhvcNAQEL
+    BQAwHTEbMBkGA1UECwwSUGxheWNlS3ViZSBST09UIENBMCAXDTIxMTEyNjE0NTky
+    MloYDzIxMjExMTAyMTQ1OTIyWjAdMRswGQYDVQQLDBJQbGF5Y2VLdWJlIFJPT1Qg
+    Q0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDH2OOYXSF7qwYXKLsh
+    lhyg3DdC5YNAQvLn9ys+4x/724b4gNVTlTD+NeFSOtSnYNLvhvIMR/D1FKN4mjTp
+    7VDVZQexViJEb6Pgqv/OeFDIgdjiBRtZjJOtD4iohqUpAO07v6uoaZHwaeFPVFMf
+    gqBrBYUeQdWGEECVWSeXK2vzDghBDyx1n/CssxkiJ4xQ1MkeDUsMp7RyGWl58d1+
+    cOjWuAmPc14cEBEuFluoiYD5ZvF/MgJpsEa8gxD6QdrCfxbuxMgeSWhoyL82HPat
+    Qnkj2WPPpvkJbuVodfuxMWiMLephigFlnpbm0te5DjSiF+Hs6U6ISDQa/WjLzJiI
+    nAefAgMBAAGjUjBQMAsGA1UdDwQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1Ud
+    DgQWBBRAykx/iSxBHD7UNlx2cxHrtiiOnjARBglghkgBhvhCAQEEBAMCAAcwDQYJ
+    KoZIhvcNAQELBQADggEBAAqzuhnKx+iFk2o2jsLbb4PEOPSgc0aGM0kSI9H+igx+
+    +uG0zazaWaib0LZf0cBmExwr8tTBmfJdCYevlglorT0hqa3Jvvxyv2n0T3wYKSyX
+    EzkyoyxqytxinL2+W3dL2T8ovG9zUmX4Tw56sq3NmgioIw+LB20GmIIIB67Hu3BK
+    BqA44pAq2I65/nRlh8P4I/ocvASBOb/i2tCXEbK0oGSsl0hqUazDLf0JUb3qrE5X
+    AcqDrf6PGXdw5mHaWBFqI4O6lvK9hhhAx+Z2WbxM99OUEGBuz4F+nDV3rSVuGgc/
+    9xGCwAKDC1rMcYZHsENM5/meMFOEOs8dEieUlA5/rTo=
+    -----END CERTIFICATE-----
+
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/basic-auth
+metadata:
+  annotations:
+    tekton.dev/git-0: https://gitea.playcek8s.playcekube.local/admin
+  name: git-user-admin
+  namespace: cicd-example
+stringData:
+  username: admin
+  password: vmffpdltm
+
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/basic-auth
+metadata:
+  annotations:
+    tekton.dev/git-1: https://gitea.playcek8s.playcekube.local/argocd
+  name: git-user-argocd
+  namespace: cicd-example
+stringData:
+  username: argocd
+  password: argocd
+
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/basic-auth
+metadata:
+  annotations:
+    tekton.dev/docker-0: https://harbor.playcek8s.playcekube.local
+  name: harbor-secret
+  namespace: cicd-example
+stringData:
+  username: admin
+  password: vmffpdltm
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: simple-pipe-bot
+  namespace: cicd-example
+secrets:
+- name: git-user-admin
+- name: git-user-argocd
+- name: harbor-secret
+
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: simple-image
+  namespace: cicd-example
+spec:
+  type: image
+  params:
+    - name: url
+      value: harbor.playcek8s.playcekube.local/admin/simple
+

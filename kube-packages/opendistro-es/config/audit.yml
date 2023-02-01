@@ -1,0 +1,57 @@
+_meta:
+  type: "audit"
+  config_version: 2
+
+config:
+  enabled: true
+
+  audit:
+    enable_rest: true
+
+    disabled_rest_categories:
+      - AUTHENTICATED
+      - GRANTED_PRIVILEGES
+
+    enable_transport: true
+
+    disabled_transport_categories:
+      - AUTHENTICATED
+      - GRANTED_PRIVILEGES
+
+    ignore_users:
+      - kibanaserver
+
+    ignore_requests: []
+
+    resolve_bulk_requests: false
+
+    log_request_body: true
+
+    resolve_indices: true
+
+    exclude_sensitive_headers: true
+
+  compliance:
+    enabled: true
+
+    internal_config: true
+
+    external_config: false
+
+    read_metadata_only: true
+
+    read_watched_fields:
+
+    read_ignore_users:
+      - kibanaserver
+
+    write_metadata_only: true
+
+    write_log_diffs: false
+
+    write_watched_indices: []
+
+    write_ignore_users:
+      - kibanaserver
+
+

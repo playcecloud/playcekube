@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: ClusterTask
+metadata:
+  name: build-java
+spec:
+  workspaces:
+    - name: workspace
+
+  params:
+    - name: appname
+      type: string
+      description: application name
+      default: default
+    - name: base-image
+      type: string
+      description: java build base image
+      default: registry.playcekube.local:5000/library/openjdk:18-ea-34-jdk
+
+  steps:
+    - image: $(params.base-image)
+      name: build-java
+      script: |
+        #!/bin/sh
+        ls -l $(workspaces.workspace.path)
+        ls -l $(workspaces.workspace.path)/source-git
+        ls -l $(workspaces.workspace.path)/$(params.appname)/src
+        cd $(workspaces.workspace.path)/$(params.appname)/src
+        javac **/*.java
+

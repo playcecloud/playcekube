@@ -1,0 +1,130 @@
+#!/bin/bash
+BASEDIR=$(dirname $(readlink -f $0))
+
+# PLAYCE CONF
+PLAYCE_DIR=/playcecloud
+if [ -f ${PLAYCE_DIR}/playcecloud.conf ]; then
+  . ${PLAYCE_DIR}/playcecloud.conf
+fi
+
+# args parsing
+while [[ $# -gt 0 ]] && [[ "$1" == "-"* ]];
+do
+  OPT="$1";
+  shift;
+
+  case "${OPT}" in
+    "--" ) ;;
+    "-" )
+      break 2;
+      ;;
+# username
+    "--username" ) ;;
+    "-u" )
+      REALM_KUBERNETES_USER="$1";
+      shift;
+      ;;
+    "--username="* )
+      REALM_KUBERNETES_USER="${OPT#*=}";
+      ;;
+# password
+    "--password" ) ;;
+    "-p" )
+      REALM_KUBERNETES_USER_PASSWORD="$1";
+      shift;
+      ;;
+    "--password="* )
+      REALM_KUBERNETES_USER_PASSWORD="${OPT#*=}";
+      ;;
+# client id
+    "--client-id" )
+      REALM_KUBERNETES_CLIENT_ID="$1";
+      shift;
+      ;;
+    "--client-id="* )
+      REALM_KUBERNETES_CLIENT_ID="${OPT#*=}";
+      ;;
+# client secret
+    "--client-secret" )
+      REALM_KUBERNETES_CLIENT_SECRET="$1";
+      shift;
+      ;;
+    "--client-secret="* )
+      REALM_KUBERNETES_CLIENT_SECRET="${OPT#*=}";
+      ;;
+    *)
+      echo >&2 "[ERROR] Invalid option: $@";
+      exit;
+      ;;
+ esac
+done
+
+# current cluster name
+CURRENT_CLUSTER=$(kubectl config current-context | sed "s/.*@\(.*\)/\1/")
+
+# keycloak config
+mkdir -p ${HOME}/.kube
+touch ${HOME}/.kube/keycloak
+
+# keycloak clientid, secret
+REALM_KUBERNETES_CLIENT_ID=$(grep "^${CURRENT_CLUSTER}" ${HOME}/.kube/keycloak | awk -F: '{ print $2 }')
+REALM_KUBERNETES_CLIENT_ID=${REALM_KUBERNETES_CLIENT_ID:=kubernetes}
+REALM_KUBERNETES_CLIENT_SECRET=$(grep "^${CURRENT_CLUSTER}" ${HOME}/.kube/keycloak | awk -F: '{ print $3 }')
+
+# input kubernetes client secret
+if [[ ! "${REALM_KUBERNETES_CLIENT_SECRET}" ]]; then
+  echo -n "Input kubernetes cluster '${CURRENT_CLUSTER}' keycloak client '${REALM_KUBERNETES_CLIENT_ID}' secets: "
+  read REALM_KUBERNETES_CLIENT_SECRET
+fi
+
+sed -i "/^${CURRENT_CLUSTER}/d" ${HOME}/.kube/keycloak
+echo "${CURRENT_CLUSTER}:${REALM_KUBERNETES_CLIENT_ID}:${REALM_KUBERNETES_CLIENT_SECRET}" >> ${HOME}/.kube/keycloak
+
+# input username
+if [[ ! "${REALM_KUBERNETES_USER}" ]]; then
+  echo -n "Username: "
+  read REALM_KUBERNETES_USER
+fi 
+
+# input password
+if [[ ! "${REALM_KUBERNETES_USER_PASSWORD}" ]]; then
+  echo -n "Password: "
+  read -s REALM_KUBERNETES_USER_PASSWORD
+  echo ""
+fi 
+
+curl -L -X POST "https://keycloak.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}/auth/realms/${CURRENT_CLUSTER}/protocol/openid-connect/token" \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode "grant_type=password" \
+--data-urlencode "client_id=${REALM_KUBERNETES_CLIENT_ID}" \
+--data-urlencode "client_secret=${REALM_KUBERNETES_CLIENT_SECRET}" \
+--data-urlencode "username=${REALM_KUBERNETES_USER}" \
+--data-urlencode "password=${REALM_KUBERNETES_USER_PASSWORD}" 2> /dev/null > tokeninfo.temp
+
+ERROR_MSG=$(cat tokeninfo.temp | jq '.error' | sed 's/"//g')
+ERROR_MSG_DETAIL=$(cat tokeninfo.temp | jq '.error_description' | sed 's/"//g')
+
+ID_TOKEN=$(cat tokeninfo.temp | jq '.access_token' | sed 's/"//g')
+REFRESH_TOKEN=$(cat tokeninfo.temp | jq '.refresh_token' | sed 's/"//g')
+
+rm -rf tokeninfo.temp
+
+if [ ! -z "${ERROR_MSG}" ] && [ "${ERROR_MSG}" != "null" ]; then
+  echo "[ERROR] login fail ( ${ERROR_MSG_DETAIL} )"
+  exit 1;
+else
+  kubectl config set-credentials ${CURRENT_CLUSTER}-${REALM_KUBERNETES_USER} \
+   --auth-provider=oidc \
+   --auth-provider-arg=idp-issuer-url=https://keycloak.${CURRENT_CLUSTER}.${PLAYCE_DOMAIN}/auth/realms/${CURRENT_CLUSTER} \
+   --auth-provider-arg=client-id=${REALM_KUBERNETES_CLIENT_ID} \
+   --auth-provider-arg=client-secret=${REALM_KUBERNETES_CLIENT_SECRET} \
+   --auth-provider-arg=id-token=${ID_TOKEN} \
+   --auth-provider-arg=refresh-token=${REFRESH_TOKEN} \
+   --auth-provider-arg=extra-scopes=groups
+
+  kubectl config set-context ${REALM_KUBERNETES_USER}@${CURRENT_CLUSTER} --cluster=${CURRENT_CLUSTER} --user=${CURRENT_CLUSTER}-${REALM_KUBERNETES_USER}
+  kubectl config use-context ${REALM_KUBERNETES_USER}@${CURRENT_CLUSTER}
+
+  echo "[INFO] User ${REALM_KUBERNETES_USER} login..."
+fi
+

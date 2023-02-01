@@ -1,0 +1,257 @@
+---
+- name: pre setup
+  user: root
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: disable selinux
+      selinux:
+        state: disabled
+      ignore_errors: yes
+      when: (ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Rocky")
+
+    - name: disable selinux for boot
+      lineinfile:
+        dest: /etc/default/grub
+        backrefs: yes
+        regexp: '^(GRUB_CMDLINE_LINUX=(?!.* selinux)\"[^\"]+)(\".*)'
+        line: '\1 selinux=0\2'
+        state: present
+      when: (ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Rocky")
+
+    - name: disable os firewalld
+      systemd:
+        name: firewalld
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+      when: (ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Rocky")
+
+    - name: disable os libvirtd
+      systemd:
+        name: libvirtd
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+      when: (ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Rocky")
+
+    - name: disable os podman
+      systemd:
+        name: podman
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+      when: (ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Rocky")
+
+    - name: set timezone to Asia/Seoul
+      timezone:
+        name: Asia/Seoul
+
+    - name: deploy server add to /etc/hosts
+      lineinfile:
+        dest: /etc/hosts
+        regexp: ".* registry.local.cloud.*"
+        line: "{{ deploy_server }} registry.local.cloud repository.local.cloud repositories.local.cloud keycloak.local.cloud rancher.local.cloud registry.{{ playce_domain }} repository.{{ playce_domain }} repositories.{{ playce_domain }} keycloak.{{ playce_domain }} rancher.{{ playce_domain }}"
+        state: present
+      vars:
+        deploy_server: "{{ lookup('env', 'DEPLOY_SERVER') }}"
+        playce_domain: "{{ lookup('env', 'PLAYCE_DOMAIN') }}"
+        deploy_mode: "{{ lookup('env', 'MODE') }}"
+      when:
+        - ( deploy_mode == "DEPLOY" )
+
+    - name: playce root ca copy for centos series
+      copy:
+        src: /kubespray/playcecloud_rootca.crt
+        dest: /etc/pki/ca-trust/source/anchors/playcecloud_rootca.crt
+        force: yes
+      when: (ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Rocky")
+
+    - name: update ca trust for centos series
+      shell: "update-ca-trust extract"
+      when: (ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Rocky")
+
+    - name: playce root ca copy for debian series
+      copy:
+        src: /kubespray/playcecloud_rootca.crt
+        dest: /usr/local/share/ca-certificates/playcecloud_rootca.crt
+        force: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: update ca trust for debian series
+      shell: "update-ca-certificates"
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: create backup repo directory
+      shell: "mkdir -p /etc/yum.repos.d/backup.{{ ansible_date_time.date }}"
+      ignore_errors: yes
+      when: (ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Rocky")
+
+    - name: move repo files to backup directory
+      shell: "mv /etc/yum.repos.d/*.repo /etc/yum.repos.d/backup.{{ ansible_date_time.date }}/"
+      ignore_errors: yes
+      when: (ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Rocky")
+
+    - name: download repo files
+      shell: "curl -o /etc/yum.repos.d/{{ item }} -L http://repository.local.cloud/{{ ansible_distribution | lower }}{{ ansible_distribution_major_version }}/{{ item }}"
+      with_items:
+        - base.repo
+        - docker-ce-stable.repo
+        - crio.repo
+      when: (ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Rocky")
+
+    - name: create backup repo
+      shell: "mv /etc/apt/sources.list /etc/apt/sources.list.{{ ansible_date_time.date }}"
+      ignore_errors: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: download focal repo file
+      shell: "curl -o /etc/apt/sources.list -L http://repository.local.cloud/focal/sources.list"
+      when: (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version'] == "20")
+
+    - name: download jammy repo file
+      shell: "curl -o /etc/apt/sources.list -L http://repository.local.cloud/jammy/sources.list"
+      when: (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version'] == "22")
+
+    - name: apt allow unauthenticated
+      copy:
+        dest: /etc/apt/apt.conf.d/99unauthdocker
+        content: |
+          APT::Get::AllowUnauthenticated "true";
+      when: (ansible_facts['distribution'] == "Ubuntu")
+
+    - name: update apt
+      shell: "apt update"
+      when: (ansible_facts['distribution'] == "Ubuntu")
+
+    - name: disable systemd-resolved
+      systemd:
+        name: systemd-resolved
+        enabled: no
+        state: stopped
+      ignore_errors: yes
+
+    - name: disable NetworkManager resolv.conf
+      copy:
+        dest: /etc/NetworkManager/conf.d/90-dns-none.conf
+        content: |
+          [main]
+          dns=none
+      ignore_errors: yes
+
+    - name: create resolv conf directory
+      file:
+        path: /run/systemd/resolve
+        state: directory
+        recurse: yes
+      ignore_errors: yes
+
+    - name: resolv.conf
+      copy:
+        dest: "{{ item }}"
+        content: |
+          nameserver {{ private_dns }}
+      vars:
+        private_dns: "{{ lookup('env', 'PRIVATE_DNS') }}"
+      with_items:
+        - /etc/resolv.conf
+        - /run/systemd/resolve/resolv.conf
+
+    - name: install chrony
+      package:
+        name: chrony
+        state: present
+
+    - name: stop os chronyd
+      systemd:
+        name: "{{ item }}"
+        enabled: yes
+        state: stopped
+      with_items:
+        - chrony
+        - chronyd
+      ignore_errors: yes
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: set chrony config for rocky
+      set_fact:
+        chrony_daemon: chronyd
+        chrony_config_file: /etc/chrony.conf
+      when: (ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "Rocky")
+
+    - name: set chrony config for debian
+      set_fact:
+        chrony_daemon: chrony
+        chrony_config_file: /etc/chrony/chrony.conf
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: public server disable
+      replace: 
+        dest: "{{ chrony_config_file }}"
+        regexp: "^(server .*)"
+        replace: '#\1'
+
+    - name: public pool disable
+      replace:
+        dest: "{{ chrony_config_file }}"
+        regexp: "^(pool .*)"
+        replace: '#\1'
+
+    - name: private ntp add
+      lineinfile:
+        dest: "{{ chrony_config_file }}"
+        regexp: "^server .*"
+        line: "server {{ private_ntp }} iburst"
+        state: present
+      vars:
+        private_ntp: "{{ lookup('env', 'PRIVATE_NTP') }}"
+
+    - name: start os chronyd
+      systemd:
+        name: "{{ chrony_daemon }}"
+        enabled: yes
+        state: started
+      ignore_errors: yes
+
+    - name: sysctl persistent - vm.overcommit
+      sysctl:
+        sysctl_file: /etc/sysctl.conf
+        name: vm.overcommit_memory
+        value: 1
+        state: present
+
+    - name: sysctl persistent - kernel
+      sysctl:
+        sysctl_file: /etc/sysctl.conf
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+      with_items:
+        - { name: 'kernel.panic', value: 10 }
+        - { name: 'kernel.panic_on_oops', value: 1 }
+
+    - name: sysctl persistent - fs.inotify
+      sysctl:
+        sysctl_file: /etc/sysctl.conf
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+      with_items:
+        - { name: 'fs.inotify.max_user_instances', value: 8192 }
+        - { name: 'fs.inotify.max_user_watches', value: 131072 }
+
+    - name: reload settings from all system configuration files
+      shell: sysctl --system
+
+    - name: file descriptors and number of threads
+      lineinfile:
+        path: /etc/security/limits.conf
+        regexp: '\* {{ item.limit_item }} {{ item.limit_type }}.*'
+        line: '* {{ item.limit_item }} {{ item.limit_type }} {{ item.value }}'
+        state: present
+      with_items:
+        - { limit_item: 'nofile', limit_type: 'hard', value: 65536 }
+        - { limit_item: 'nofile', limit_type: 'soft', value: 65536 }
+        - { limit_item: 'nproc', limit_type: 'hard', value: 65536 }
+        - { limit_item: 'nproc', limit_type: 'soft', value: 65536 }
+
